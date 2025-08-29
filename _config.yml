@@ -1,0 +1,14 @@
+title: "Perfumería Expert"
+description: "Sistema Experto de Fragancias - Encuentra tu perfume ideal"
+url: "https://tu-usuario.github.io"
+baseurl: "/Asistente-de-fragancias"
+
+# GitHub Pages settings
+plugins:
+  - jekyll-sitemap
+  - jekyll-feed
+
+# Exclude files
+exclude:
+  - README.md
+  - lista-de-perfumes.xlsx

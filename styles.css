@@ -1,0 +1,166 @@
+/* Estilos adicionales para el sistema experto */
+
+.typing-indicator {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    background: #edf2f7;
+    border-radius: 18px;
+    border-bottom-left-radius: 4px;
+    align-self: flex-start;
+    max-width: 80%;
+}
+
+.typing-dots {
+    display: flex;
+    gap: 4px;
+}
+
+.typing-dot {
+    width: 8px;
+    height: 8px;
+    background: #6b46c1;
+    border-radius: 50%;
+    animation: typing 1.4s infinite ease-in-out;
+}
+
+.typing-dot:nth-child(1) { animation-delay: -0.32s; }
+.typing-dot:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes typing {
+    0%, 80%, 100% { transform: scale(0.8); opacity: 0.5; }
+    40% { transform: scale(1); opacity: 1; }
+}
+
+.perfume-stats {
+    display: flex;
+    justify-content: space-around;
+    margin: 15px 0;
+    padding: 10px;
+    background: #f7fafc;
+    border-radius: 8px;
+}
+
+.stat {
+    text-align: center;
+    flex: 1;
+}
+
+.stat-label {
+    font-size: 0.8rem;
+    color: #718096;
+    margin-bottom: 5px;
+}
+
+.stat-value {
+    font-weight: bold;
+    color: #6b46c1;
+}
+
+.intensity-bar {
+    width: 100%;
+    height: 6px;
+    background: #e2e8f0;
+    border-radius: 3px;
+    overflow: hidden;
+    margin-top: 5px;
+}
+
+.intensity-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #48bb78, #ed8936, #e53e3e);
+    transition: width 0.3s ease;
+}
+
+.voice-status {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #e53e3e;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    display: none;
+    z-index: 1000;
+    animation: pulse 1.5s infinite;
+}
+
+.voice-status.show {
+    display: block;
+}
+
+.recommendation-confidence {
+    text-align: center;
+    margin-top: 10px;
+    font-size: 0.9rem;
+    color: #4a5568;
+}
+
+.confidence-high { color: #48bb78; }
+.confidence-medium { color: #ed8936; }
+.confidence-low { color: #e53e3e; }
+
+.perfume-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin: 10px 0;
+    justify-content: center;
+}
+
+.tag {
+    background: #6b46c1;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+}
+
+.chat-suggestions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 10px 15px;
+    background: #f8f9fa;
+    border-top: 1px solid #e9ecef;
+}
+
+.suggestion-chip {
+    background: white;
+    border: 1px solid #d8d8d8;
+    padding: 6px 12px;
+    border-radius: 15px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.suggestion-chip:hover {
+    background: #6b46c1;
+    color: white;
+    border-color: #6b46c1;
+}
+
+@media (max-width: 768px) {
+    .perfume-stats {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .voice-status {
+        top: 10px;
+        right: 10px;
+        font-size: 0.8rem;
+        padding: 8px 12px;
+    }
+    
+    .chat-suggestions {
+        padding: 8px 10px;
+    }
+    
+    .suggestion-chip {
+        font-size: 0.8rem;
+        padding: 5px 10px;
+    }
+}

@@ -1,0 +1,3538 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfumería Expert - Sistema Final</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f8f4ff 0%, #f0ebff 100%);
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            flex: 1;
+        }
+        
+        header {
+            text-align: center;
+            padding: 20px 0;
+            background: linear-gradient(135deg, #6b46c1 0%, #805ad5 100%);
+            color: white;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+        
+        .tagline {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 20px;
+        }
+        
+        .chat-container {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            height: 70vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .message {
+            max-width: 80%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            line-height: 1.4;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .bot-message {
+            background: #edf2f7;
+            border-bottom-left-radius: 4px;
+            align-self: flex-start;
+        }
+        
+        .bot-message:has-text(**) {
+            font-weight: bold;
+        }
+        
+        .user-message {
+            background: #6b46c1;
+            color: white;
+            border-bottom-right-radius: 4px;
+            align-self: flex-end;
+        }
+        
+        .input-area {
+            display: flex;
+            padding: 15px;
+            background: #f8f9fa;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        #user-input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 1px solid #d8d8d8;
+            border-radius: 20px;
+            outline: none;
+            font-size: 1rem;
+        }
+        
+        #send-btn {
+            background: #6b46c1;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            margin-left: 10px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background 0.3s;
+        }
+        
+        #send-btn:hover {
+            background: #5a3aa3;
+        }
+        
+        .perfume-display {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            height: fit-content;
+        }
+        
+        .perfume-display h2 {
+            color: #6b46c1;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .perfume-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            background: #fafafa;
+        }
+        
+        .perfume-image {
+            width: 80px;
+            height: 80px;
+            background: #ddd;
+            border-radius: 50%;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            color: #6b46c1;
+        }
+        
+        .perfume-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 5px;
+            text-align: center;
+        }
+        
+        .perfume-info {
+            font-size: 0.9rem;
+            color: #718096;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .perfume-inspiration {
+            font-size: 0.95rem;
+            color: #4a5568;
+            font-style: italic;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .perfume-notes {
+            font-size: 0.9rem;
+            color: #4a5568;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .perfume-description {
+            font-size: 0.9rem;
+            color: #718096;
+            text-align: center;
+        }
+        
+        .perfume-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin: 10px 0;
+            justify-content: center;
+        }
+        
+        .tag {
+            background: #6b46c1;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+        }
+        
+        .chat-suggestions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 10px 15px;
+            background: #f8f9fa;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        .suggestion-chip {
+            background: white;
+            border: 1px solid #d8d8d8;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .suggestion-chip:hover {
+            background: #6b46c1;
+            color: white;
+            border-color: #6b46c1;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌸 Perfumería Expert</h1>
+            <p class="tagline">Sistema Experto con Base de Datos Real (M-H-U)</p>
+        </header>
+        
+        <div class="main-content">
+            <div class="chat-container">
+                <div class="chat-messages" id="chat-messages"></div>
+                
+                <div class="input-area">
+                    <input type="text" id="user-input" placeholder="Describe qué fragancia buscas...">
+                    <button id="send-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="22" y1="2" x2="11" y2="13"></line>
+                            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                        </svg>
+                    </button>
+                </div>
+                
+                <div class="chat-suggestions">
+                    <div class="suggestion-chip" onclick="sendSuggestion('Perfume gourmand con vainilla para mujer')">🍰 Gourmand vainilla</div>
+                    <div class="suggestion-chip" onclick="sendSuggestion('Fragancia amaderada con oud para noche')">🌳 Oud nocturno</div>
+                    <div class="suggestion-chip" onclick="sendSuggestion('Algo fresco con cítricos para deporte')">🍋 Fresco deporte</div>
+                    <div class="suggestion-chip" onclick="sendSuggestion('Perfume floral con rosa para cita')">🌹 Rosa romántica</div>
+                    <div class="suggestion-chip" onclick="sendSuggestion('Fragancia elegante para trabajo')">💼 Elegante trabajo</div>
+                    <div class="suggestion-chip" onclick="sendSuggestion('Ayuda')">❓ Guía completa</div>
+                </div>
+            </div>
+            
+            <div class="perfume-display">
+                <h2>Recomendación</h2>
+                <div class="perfume-card">
+                    <div class="perfume-image">🌟</div>
+                    <div class="perfume-name">Esperando consulta...</div>
+                    <div class="perfume-info">SKU: - | Género: -</div>
+                    <div class="perfume-tags"></div>
+                    <div class="perfume-inspiration">Describe lo que buscas</div>
+                    <div class="perfume-notes">El sistema analizará tus preferencias</div>
+                    <div class="perfume-description">Y te recomendará la fragancia perfecta</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+       const perfumes = [
+  {
+    "name": "LIPSTICK",
+    "sku": "M-77-LIPSTICK",
+    "inspiration": "YES I AM (Cacharel)",
+    "notes": "Frambuesa, Vainilla, Vainillin",
+    "description": "Gourmand intenso, sensual y moderno con un corazón lácteo y dulce.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "frutal",
+      "sensual",
+      "juvenil",
+      "intenso",
+      "cremoso"
+    ],
+    "emoji": "💄"
+  },
+  {
+    "name": "CAPTIVATING SILLAGE",
+    "sku": "M-76-CAPTIVATINGSILLAGE",
+    "inspiration": "YARA MOI (Lattafa)",
+    "notes": "Coco, Frutas Tropicales, Vainilla",
+    "description": "Fragancia cremosa, tropical y dulce, como un cóctel vacation.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "frutal"
+    ],
+    "emoji": "🍭"
+  },
+  {
+    "name": "SWEET CANDY",
+    "sku": "M-75-SWEETCANDY",
+    "inspiration": "YARA CANDY (Lattafa)",
+    "notes": "Algodón de Azúcar, Baya, Vainilla",
+    "description": "Versión ultra gourmand y juguetona de Yara, muy dulce.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "frutal"
+    ],
+    "emoji": "🍭"
+  },
+  {
+    "name": "PINK DUNE",
+    "sku": "M-74-PINKDUNE",
+    "inspiration": "YARA (Lattafa)",
+    "notes": "Frutas Mixtas, Notas Lácteas, Vainilla",
+    "description": "Aroma suave y cremoso que evoca un batido de frutas.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "frutal",
+      "cremoso"
+    ],
+    "emoji": "💃"
+  },
+  {
+    "name": "CHARMED ELEMENTS",
+    "sku": "M-73-CHARMEDELEMENTS",
+    "inspiration": "VELVET GOLD (Paris Hilton)",
+    "notes": "Flor de Champaca, Vainilla, Ámbar",
+    "description": "Oriental dulce y seductora con un toque glamuroso.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "oriental",
+      "sensual"
+    ],
+    "emoji": "🍭"
+  },
+  {
+    "name": "PINK YOGUI",
+    "sku": "M-72-PINKYOGUI",
+    "inspiration": "TOY 2 BUBBLE GUM (Moschino)",
+    "notes": "Chicle, Fresia, Almizcle",
+    "description": "Interpretación divertida y juvenil con nota principal de chicle.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "juvenil"
+    ],
+    "emoji": "💃"
+  },
+  {
+    "name": "ICONIC YOGUI",
+    "sku": "M-71-ICONICYOGUI",
+    "inspiration": "TOY 2 (Moschino)",
+    "notes": "Manzana, Rosa Blanca, Almizcle",
+    "description": "Fragancia floral almizclada, fresca y limpia. Frasco de oso.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "frutal",
+      "floral"
+    ],
+    "emoji": "🌸"
+  },
+  {
+    "name": "TOMY",
+    "sku": "M-70-TOMY",
+    "inspiration": "TOMMY GIRL (Tommy Hilfiger)",
+    "notes": "Mandarina, Flor de Tea, Almizcle",
+    "description": "Clásico fresco y limpio de los 90. Floral-acuático.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "floral",
+      "fresco",
+      "elegante"
+    ],
+    "emoji": "🌸"
+  },
+  {
+    "name": "SUMMER HIT",
+    "sku": "M-69-SUMMERHIT",
+    "inspiration": "THANK U, NEXT (Ariana Grande)",
+    "notes": "Frambuesa, Coco, Macarons",
+    "description": "Gourmand cremoso y adictivo. Joven y moderno.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "frutal",
+      "juvenil",
+      "cremoso"
+    ],
+    "emoji": "🍰"
+  },
+  {
+    "name": "DEVIN",
+    "sku": "M-68-DEVIN",
+    "inspiration": "TEMPTING (Victoria's Secret)",
+    "notes": "Pera, Gardenia, Vainilla",
+    "description": "Dulce, frutal y muy femenino. Típico de perfumería de baño.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "frutal"
+    ],
+    "emoji": "🍭"
+  },
+  {
+    "name": "SWEET BURST",
+    "sku": "M-67-SWEETBURST",
+    "inspiration": "SWEET LIKE CANDY (Ariana Grande)",
+    "notes": "Frambuesa, Bergamota, Marshmallow",
+    "description": "Aroma ultradulce, juguetón y afrutado.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "frutal",
+      "fresco",
+      "juvenil"
+    ],
+    "emoji": "🍭"
+  },
+  {
+    "name": "SUNAGE",
+    "sku": "M-66-SUNAGE",
+    "inspiration": "SUNSHINE WOMAN (Amouage)",
+    "notes": "Albaricoque, Absenta, Sándalo",
+    "description": "Oriental compleja y luminosa. Elegante y única.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "amaderado",
+      "oriental",
+      "elegante"
+    ],
+    "emoji": "🌟"
+  },
+  {
+    "name": "HOLIDAY AFFAIR",
+    "sku": "M-65-HOLIDAYAFFAIR",
+    "inspiration": "SORBETTO ROSSO (Escada)",
+    "notes": "Sandía, Cítricos, Flor de Azahar",
+    "description": "Aroma veraniego, fresco y frutal. Muy divertido.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "fresco",
+      "juvenil"
+    ],
+    "emoji": "🌊"
+  },
+  {
+    "name": "YES",
+    "sku": "M-64-YES",
+    "inspiration": "SÌ (Giorgio Armani)",
+    "notes": "Cassis, Rosa Blanca, Vainilla de Madagascar",
+    "description": "Chypre frutal moderno y elegante. Empoderante.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "floral",
+      "elegante",
+      "juvenil"
+    ],
+    "emoji": "💃"
+  },
+  {
+    "name": "DELPHY",
+    "sku": "M-63-DELPHY",
+    "inspiration": "RALPH (Ralph Lauren)",
+    "notes": "Manzana Verde, Magnolia, Cedro",
+    "description": "Fragancia juvenil, fresca y verde. De día.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "frutal",
+      "amaderado",
+      "juvenil"
+    ],
+    "emoji": "💃"
+  },
+  {
+    "name": "SEDUCCION",
+    "sku": "M-62-SEDUCCION",
+    "inspiration": "PURE SEDUCTION (Victoria's Secret)",
+    "notes": "Ciruela, Fresia, Vainilla",
+    "description": "Aroma frutal y floral muy popular. Femenino y accesible.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "floral"
+    ],
+    "emoji": "🌸"
+  },
+  {
+    "name": "TROPICAL DAWN",
+    "sku": "M-61-TROPICALDAWN",
+    "inspiration": "PINK PINEAPPLE SUNRISE (B&BW)",
+    "notes": "Piña, Pomelo Rosa, Azúcar de Caña",
+    "description": "Aroma tropical vibrante, dulce y soleado.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "frutal",
+      "floral"
+    ],
+    "emoji": "🍭"
+  },
+  {
+    "name": "PINK SILKY",
+    "sku": "M-60-PINKSILKY",
+    "inspiration": "PINK CHIFFON (B&BW)",
+    "notes": "Limón, Peonía, Vainilla",
+    "description": "Fragancia femenina, delicada y limpia.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "floral",
+      "fresco"
+    ],
+    "emoji": "💃"
+  },
+  {
+    "name": "POUPON",
+    "sku": "M-59-POUPON",
+    "inspiration": "PETITS ET MAMANS (Bvlgari)",
+    "notes": "Bergamota, Manzanilla, Vainilla",
+    "description": "Colonia suave, limpia y tranquilizadora. Para bebés y mamás.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "fresco",
+      "cremoso"
+    ],
+    "emoji": "💃"
+  },
+  {
+    "name": "NICKY",
+    "sku": "M-58-NICKY",
+    "inspiration": "PARIS HILTON (Paris Hilton)",
+    "notes": "Naranja, Tuberosa, Vainilla",
+    "description": "Aroma frutal-floral dulce y glamuroso. Nota de galleta.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "floral"
+    ],
+    "emoji": "🍭"
+  },
+  {
+    "name": "MURANO",
+    "sku": "M-57-MURANO",
+    "inspiration": "OMNIA CRYSTALLINE (Bvlgari)",
+    "notes": "Bambú, Pera, Almizcle",
+    "description": "Fragancia ligera, translúcida y acuática.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "frutal"
+    ],
+    "emoji": "💃"
+  },
+  {
+    "name": "CORALINE",
+    "sku": "M-56-CORALINE",
+    "inspiration": "OMNIA CORAL (Bvlgari)",
+    "notes": "Granada, Flor de Agua, Almizcle",
+    "description": "Vibrante, afrutada y floral. Energética.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "floral",
+      "fresco"
+    ],
+    "emoji": "🌸"
+  },
+  {
+    "name": "AMATISTA",
+    "sku": "M-55-AMATISTA",
+    "inspiration": "OMNIA AMETHYSTE (Bvlgari)",
+    "notes": "Rosa, Iris, Madera de Palo de Rosa",
+    "description": "Floral-elegante y sofisticado.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "floral",
+      "amaderado",
+      "elegante"
+    ],
+    "emoji": "🌸"
+  },
+  {
+    "name": "OLIMPIANA",
+    "sku": "M-54-OLIMPIANA",
+    "inspiration": "OLIMPÉA (Paco Rabanne)",
+    "notes": "Sal de Ámbar, Flor de Azahar, Vainilla",
+    "description": "Ambarina salada. Fresca, sensual y adictiva.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "oriental",
+      "sensual"
+    ],
+    "emoji": "💃"
+  },
+  {
+    "name": "DREAMY GALAXY DM",
+    "sku": "M-53-DREAMYGALAXYDM",
+    "inspiration": "NOBLE BLUSH",
+    "notes": "Albaricoque, Peonía, Sándalo",
+    "description": "Floral-frutal suave y delicado.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "floral",
+      "amaderado",
+      "cremoso"
+    ],
+    "emoji": "🌸"
+  },
+  {
+    "name": "ELVATED EXPERIENCE",
+    "sku": "M-52-ELVATEDEXPERIENCE",
+    "inspiration": "MOD VANILLA",
+    "notes": "Vainilla, Almizcle, Sándalo",
+    "description": "Gourmand simple y cálido. Acogedor y sensual.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "amaderado",
+      "sensual"
+    ],
+    "emoji": "🍰"
+  },
+  {
+    "name": "FANTASY MIDNIGTH",
+    "sku": "M-51-FANTASYMIDNIGTH",
+    "inspiration": "MIDNIGHT FANTASY (Britney Spears)",
+    "notes": "Ciruela, Orquídea, Almizcle",
+    "description": "Versión más oscura y frutal de Fantasy. Sensual.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "sensual"
+    ],
+    "emoji": "💃"
+  },
+  {
+    "name": "CHOUPETTE",
+    "sku": "M-50-CHOUPETTE",
+    "inspiration": "MEOW (Katy Perry)",
+    "notes": "Mandarina, Gardenia, Vainilla",
+    "description": "Gourmand afrutado y juguetón. Frasco de gatito.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "juvenil"
+    ],
+    "emoji": "🍰"
+  },
+  {
+    "name": "MAUDIE",
+    "sku": "M-49-MAUDIE",
+    "inspiration": "MAD ABOUT YOU",
+    "notes": "Pera, Peonía, Almizcle",
+    "description": "Floral-frutal moderno y romántico.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "frutal",
+      "floral",
+      "sensual",
+      "juvenil"
+    ],
+    "emoji": "🌸"
+  },
+  {
+    "name": "TURQUESA",
+    "sku": "M-48-TURQUESA",
+    "inspiration": "LIGHT BLUE (D&G)",
+    "notes": "Manzana, Cedro, Bambú",
+    "description": "Fresco, cítrico y amaderado. Icono veraniego.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "frutal",
+      "fresco",
+      "amaderado"
+    ],
+    "emoji": "🌊"
+  },
+  {
+    "name": "TRUE EPOQUE",
+    "sku": "M-47-TRUEEPOQUE",
+    "inspiration": "LA VIE EST BELLE L'ELIXIR (Lancôme)",
+    "notes": "Iris, Vainilla, Avellana",
+    "description": "Elixir más intenso y gourmand. Profundo y persistente.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "intenso"
+    ],
+    "emoji": "🍰"
+  },
+  {
+    "name": "BELLE EPOQUE",
+    "sku": "M-46-BELLEEPOQUE",
+    "inspiration": "LA VIE EST BELLE (Lancôme)",
+    "notes": "Iris, Pachulí, Vainilla",
+    "description": "Gourmand floral enorme y feliz. Best-seller mundial.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "floral",
+      "oriental"
+    ],
+    "emoji": "🍰"
+  },
+  {
+    "name": "AVENTURA ROSADA",
+    "sku": "M-45-AVENTURAROSADA",
+    "inspiration": "L'AVENTURE ROSE",
+    "notes": "Rosa, Vainilla, Almizcle",
+    "description": "Floral oriental suave y romántico.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "floral",
+      "oriental",
+      "sensual",
+      "cremoso"
+    ],
+    "emoji": "🌸"
+  },
+  {
+    "name": "CHESCOVIO",
+    "sku": "M-44-CHESCOVIO",
+    "inspiration": "L'AVENTURE BLANCHE",
+    "notes": "Limón, Lavanda, Almizcle",
+    "description": "Aroma fresco, limpio y aromático. Unisex.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "fresco"
+    ],
+    "emoji": "🌊"
+  },
+  {
+    "name": "AMIGAS POR SIEMPRE",
+    "sku": "M-43-AMIGASPORSIEMPRE",
+    "inspiration": "KIM KARDASHIAN",
+    "notes": "Gardenia, Tuberosa, Vainilla",
+    "description": "Floral blanco cremoso y sensual.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "floral",
+      "sensual",
+      "cremoso"
+    ],
+    "emoji": "🌸"
+  },
+  {
+    "name": "FRESA Y FRAMBUESA",
+    "sku": "M-42-FRESAYFRAMBUESA",
+    "inspiration": "JUICE BERRY",
+    "notes": "Fresa, Frambuesa, Azúcar",
+    "description": "Dulce, frutal y jugoso. Como una golosina.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "frutal"
+    ],
+    "emoji": "🍭"
+  },
+  {
+    "name": "VIBRANT SMILE",
+    "sku": "M-41-VIBRANTSMILE",
+    "inspiration": "JOY (Dior)",
+    "notes": "Melocotón, Jazmín, Sándalo",
+    "description": "Floral alegre y costoso. \"El perfume más caro del mundo\".",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "floral",
+      "amaderado"
+    ],
+    "emoji": "🌸"
+  },
+  {
+    "name": "VUELROSO",
+    "sku": "M-40-VUELROSO",
+    "inspiration": "IL ROSO",
+    "notes": "Rosa, Azafrán, Oud",
+    "description": "Floral oriental intenso y especiado.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "floral",
+      "oriental",
+      "intenso"
+    ],
+    "emoji": "🌸"
+  },
+  {
+    "name": "HILDE",
+    "sku": "M-39-HILDE",
+    "inspiration": "HIDDEN FANTASY (Britney Spears)",
+    "notes": "Nectarina, Orquídea, Vainilla",
+    "description": "Floral-frutal dulce y juguetón.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "floral",
+      "juvenil"
+    ],
+    "emoji": "🍭"
+  },
+  {
+    "name": "HEREDERA",
+    "sku": "M-38-HEREDERA",
+    "inspiration": "HEIRESS (Paris Hilton)",
+    "notes": "Naranja, Fresia, Vainilla",
+    "description": "Floral-frutal dulce y glamuroso.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "floral"
+    ],
+    "emoji": "🍭"
+  },
+  {
+    "name": "PINK OPULENCE",
+    "sku": "M-37-PINKOPULENCE",
+    "inspiration": "HAYA",
+    "notes": "Rosa, Almizcle, Vainilla",
+    "description": "Floral musk suave y polvorento.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "floral",
+      "cremoso"
+    ],
+    "emoji": "🌸"
+  },
+  {
+    "name": "GODINA",
+    "sku": "M-36-GODINA",
+    "inspiration": "GOOD GIRL (Carolina Herrera)",
+    "notes": "Almendra, Jazmín, Tabaco",
+    "description": "Oriental floral seductora. Frasco de tacón de aguja.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "floral",
+      "oriental",
+      "sensual"
+    ],
+    "emoji": "🌸"
+  },
+  {
+    "name": "FANTAZIA",
+    "sku": "M-35-FANTAZIA",
+    "inspiration": "FANTASY (Britney Spears)",
+    "notes": "Kiwi, Cupcake, Orquídea",
+    "description": "Gourmand frutal icónico y ultradulce.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand"
+    ],
+    "emoji": "🍭"
+  },
+  {
+    "name": "EXULTANTE",
+    "sku": "M-34-EXULTANTE",
+    "inspiration": "EUPHORIA (Calvin Klein)",
+    "notes": "Granada, Loto, Pachulí",
+    "description": "Oriental amaderada misteriosa y sensual.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "amaderado",
+      "oriental",
+      "sensual"
+    ],
+    "emoji": "🌟"
+  },
+  {
+    "name": "STELLA E.",
+    "sku": "M-33-STELLAE",
+    "inspiration": "ETERNITY (Calvin Klein)",
+    "notes": "Lirio del Valle, Salvia, Sándalo",
+    "description": "Floral verde clásico y romántico.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "floral",
+      "amaderado",
+      "sensual",
+      "elegante"
+    ],
+    "emoji": "🌸"
+  },
+  {
+    "name": "EVASION",
+    "sku": "M-32-EVASION",
+    "inspiration": "ESCAPE (Calvin Klein)",
+    "notes": "Manzana, Melocotón, Cashmeran",
+    "description": "Floral frutal fresco y relajante.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "frutal",
+      "floral",
+      "fresco"
+    ],
+    "emoji": "🌸"
+  },
+  {
+    "name": "YUMANI",
+    "sku": "M-31-YUMANI",
+    "inspiration": "BECAUSE IT'S YOU (Armani)",
+    "notes": "Frambuesa, Vainilla, Sándalo",
+    "description": "Dulce, afrutado y moderno. Muy popular.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "frutal",
+      "amaderado",
+      "juvenil"
+    ],
+    "emoji": "🍭"
+  },
+  {
+    "name": "MALLIE",
+    "sku": "M-30-MALLIE",
+    "inspiration": "ELIE SAAB LE PARFUM",
+    "notes": "Neroli, Jazmín, Miel de Rosas",
+    "description": "Floral oriental rico y elegante. Lujoso.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "floral",
+      "oriental",
+      "elegante"
+    ],
+    "emoji": "🌸"
+  },
+  {
+    "name": "DULCE",
+    "sku": "M-29-DULCE",
+    "inspiration": "DOLCE (D&G)",
+    "notes": "Papaya, Narciso, Almizcle",
+    "description": "Floral frutal soleado y femenino.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "floral"
+    ],
+    "emoji": "🍭"
+  },
+  {
+    "name": "ESTA",
+    "sku": "M-28-ESTA",
+    "inspiration": "DAHAB",
+    "notes": "Oud, Azafrán, Rosa",
+    "description": "Oriental intenso de Oriente Medio. Lujoso.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "floral",
+      "oriental",
+      "intenso"
+    ],
+    "emoji": "🌟"
+  },
+  {
+    "name": "COCO PASION",
+    "sku": "M-27-COCOPASION",
+    "inspiration": "COCONUT PASSION",
+    "notes": "Coco, Vainilla, Sándalo",
+    "description": "Gourmand tropical cremoso y soleado.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "frutal",
+      "amaderado",
+      "cremoso"
+    ],
+    "emoji": "🥥"
+  },
+  {
+    "name": "ELONOIR",
+    "sku": "M-26-ELONOIR",
+    "inspiration": "COCO NOIR (Chanel)",
+    "notes": "Pomelo, Rosa, Pachulí",
+    "description": "Ambarino floral oscuro y misterioso. Elegante.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "frutal",
+      "floral",
+      "oriental",
+      "elegante"
+    ],
+    "emoji": "🥥"
+  },
+  {
+    "name": "DREAM PARADISE",
+    "sku": "M-25-DREAMPARADISE",
+    "inspiration": "CLOUD PINK (Ariana Grande)",
+    "notes": "Bergamota, Coco, Almizcle",
+    "description": "Versión más frutal y rosada de Cloud. Dulce y aireada.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "frutal",
+      "floral",
+      "fresco"
+    ],
+    "emoji": "🍭"
+  },
+  {
+    "name": "UPLIFTING DREAM",
+    "sku": "M-24-UPLIFTINGDREAM",
+    "inspiration": "CLOUD (Ariana Grande)",
+    "notes": "Pera, Lavanda, Vainilla de Coco",
+    "description": "Gourmand \"lavanda-algodón de azúcar\". Best-seller.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "frutal"
+    ],
+    "emoji": "🍭"
+  },
+  {
+    "name": "ONLINE",
+    "sku": "M-23-ONLINE",
+    "inspiration": "CK IN2U FOR HER",
+    "notes": "Pomelo Rosa, Cedro, Almizcle",
+    "description": "Floral frutal fresco para la generación digital.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "floral",
+      "fresco",
+      "amaderado"
+    ],
+    "emoji": "🌸"
+  },
+  {
+    "name": "ILLUSTRIOUS LADY",
+    "sku": "M-22-ILLUSTRIOUSLADY",
+    "inspiration": "CH CENTRAL PARK",
+    "notes": "Peonía, Lirio, Almizcle",
+    "description": "Floral verde y elegante. Sofisticado.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "floral",
+      "elegante"
+    ],
+    "emoji": "🌸"
+  },
+  {
+    "name": "CAROL",
+    "sku": "M-21-CAROL",
+    "inspiration": "CAROLINA HERRERA",
+    "notes": "Pimienta Rosa, Jazmín, Ámbar",
+    "description": "Floral ambarino elegante y moderno.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "floral",
+      "oriental",
+      "elegante",
+      "juvenil"
+    ],
+    "emoji": "🌸"
+  },
+  {
+    "name": "LEXINE",
+    "sku": "M-20-LEXINE",
+    "inspiration": "CARMINA",
+    "notes": "Cereza, Almizcle, Vainilla",
+    "description": "Gourmand frutal con nota de cereza. Sensual.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "sensual"
+    ],
+    "emoji": "🍰"
+  },
+  {
+    "name": "MUSIC HALL",
+    "sku": "M-19-MUSICHALL",
+    "inspiration": "CAN CAN (Paris Hilton)",
+    "notes": "Melocotón, Gardenia, Vainilla",
+    "description": "Floral frutal dulce y festivo.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "floral"
+    ],
+    "emoji": "🍭"
+  },
+  {
+    "name": "LONDON DNA",
+    "sku": "M-18-LONDONDNA",
+    "inspiration": "BURBERRY HER",
+    "notes": "Fresa, Madera de Sándalo, Musk",
+    "description": "Gourmand frutal moderno y delicioso.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "frutal",
+      "amaderado",
+      "juvenil"
+    ],
+    "emoji": "🍰"
+  },
+  {
+    "name": "BARBARA ROSA",
+    "sku": "M-17-BARBARAROSA",
+    "inspiration": "BHARARA ROSE",
+    "notes": "Rosa, Vainilla, Almizcle",
+    "description": "Floral oriental suave y romántico.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "floral",
+      "oriental",
+      "sensual",
+      "cremoso"
+    ],
+    "emoji": "🌸"
+  },
+  {
+    "name": "REINA DEL MAMBO",
+    "sku": "M-16-REINADELMAMBO",
+    "inspiration": "BHARARA NICHE FEMME",
+    "notes": "Frutas, Flores, Vainilla",
+    "description": "Floral frutal complejo y elegante.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "frutal",
+      "floral",
+      "elegante"
+    ],
+    "emoji": "🌸"
+  },
+  {
+    "name": "TERCIOPELO ROSADO",
+    "sku": "M-15-TERCIOPELOROSADO",
+    "inspiration": "BHARARA MAST VELVET ROSE",
+    "notes": "Rosa, Oud, Vainilla",
+    "description": "Floral oriental intenso y aterciopelado.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "floral",
+      "oriental",
+      "intenso",
+      "cremoso"
+    ],
+    "emoji": "🌸"
+  },
+  {
+    "name": "PIUG",
+    "sku": "M-14-PIUG",
+    "inspiration": "ARI (Ariana Grande)",
+    "notes": "Pera, Rosa, Almizcle",
+    "description": "Floral frutal ligero y juvenil.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "frutal",
+      "floral",
+      "juvenil"
+    ],
+    "emoji": "🌸"
+  },
+  {
+    "name": "KISS",
+    "sku": "M-13-KISS",
+    "inspiration": "AQUA KISS",
+    "notes": "Notas Acuáticas, Florales, Almizcle",
+    "description": "Fresco, limpio y ligero. Perfecto para el día.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "floral",
+      "fresco"
+    ],
+    "emoji": "🌊"
+  },
+  {
+    "name": "DALILA",
+    "sku": "M-12-DALILA",
+    "inspiration": "ANIMALE ANIMALE",
+    "notes": "Vainilla, Sándalo, Almizcle",
+    "description": "Gourmand cálido y sensual.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "amaderado",
+      "sensual"
+    ],
+    "emoji": "🍰"
+  },
+  {
+    "name": "CUPIDO",
+    "sku": "M-11-CUPIDO",
+    "inspiration": "AMOR AMOR (Cacharel)",
+    "notes": "Pomelo, Jazmín, Almizcle",
+    "description": "Floral frutal fresco y romántico.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "floral",
+      "fresco",
+      "sensual"
+    ],
+    "emoji": "🌸"
+  },
+  {
+    "name": "GIORGIA",
+    "sku": "M-10-GIORGIA",
+    "inspiration": "ACQUA DI GIOIA (Armani)",
+    "notes": "Menta, Azúcar Moreno, Cedro",
+    "description": "Acuático fresco con un toque dulce y mentolado único.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "fresco",
+      "amaderado"
+    ],
+    "emoji": "🍭"
+  },
+  {
+    "name": "DOSIETRES",
+    "sku": "M-9-DOSIETRES",
+    "inspiration": "273 RODEO DRIVE",
+    "notes": "Champaca, Fresia, Vainilla",
+    "description": "Floral elegante y sofisticado.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "floral",
+      "elegante"
+    ],
+    "emoji": "🌸"
+  },
+  {
+    "name": "TOUCHDOWN GLORY",
+    "sku": "M-8-TOUCHDOWNGLO",
+    "inspiration": "212 VIP WINS (CH)",
+    "notes": "Manzana Verde, Rosa, Vainilla",
+    "description": "Floral frutal juguetón y optimista.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "frutal",
+      "floral",
+      "juvenil"
+    ],
+    "emoji": "🌸"
+  },
+  {
+    "name": "URBAN CAROLA",
+    "sku": "M-7-URBANCAROLA",
+    "inspiration": "212 VIP ROSÉ LOVE NY (CH)",
+    "notes": "Frambuesa, Flor de Azahar, Vainilla",
+    "description": "Edición especial frutal y dulce de VIP Rosé.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "frutal"
+    ],
+    "emoji": "🍭"
+  },
+  {
+    "name": "BOUYAN CAROLA",
+    "sku": "M-6-BOUYANCAROLA",
+    "inspiration": "212 VIP ROSÉ (CH)",
+    "notes": "Pomelo Rosa, Peonía, Almizcle",
+    "description": "Floral fresco y moderno. Muy femenino.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "floral",
+      "fresco",
+      "juvenil"
+    ],
+    "emoji": "🌸"
+  },
+  {
+    "name": "CAROLA",
+    "sku": "M-5-CAROLA",
+    "inspiration": "212 VIP DORADA (CH)",
+    "notes": "Piña, Flor de Frangipani, Almizcle",
+    "description": "Edición dorada tropical y solar.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "frutal"
+    ],
+    "emoji": "🥥"
+  },
+  {
+    "name": "SEXY SYMBOL",
+    "sku": "M-4-SEXYSYMBOL",
+    "inspiration": "212 SEXY (CH)",
+    "notes": "Gardenia, Vainilla, Sándalo",
+    "description": "Versión sensual y cremosa de 212.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "amaderado",
+      "sensual"
+    ],
+    "emoji": "💃"
+  },
+  {
+    "name": "PURE YOUTH",
+    "sku": "M-3-PUREYOUTH",
+    "inspiration": "212 HEROES FOREVER YOUNG (CH)",
+    "notes": "Mandarina, Lavanda, Vainilla",
+    "description": "Edición juvenil y cítrica de Heroes.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "juvenil"
+    ],
+    "emoji": "💃"
+  },
+  {
+    "name": "ANGLE",
+    "sku": "M-2-ANGLE",
+    "inspiration": "360° (Perry Ellis)",
+    "notes": "Flor de Naranjo, Gardenia, Vainilla",
+    "description": "Fresco, limpio y aldehídico. Dupe clásico.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "fresco",
+      "elegante"
+    ],
+    "emoji": "🌊"
+  },
+  {
+    "name": "ADRIANA",
+    "sku": "M-1-ADRIANA",
+    "inspiration": "212 (Carolina Herrera)",
+    "notes": "Cítricos, Flor de Lirio, Sándalo",
+    "description": "Icono de los 90. Fresco, urbano y floral.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "floral",
+      "fresco",
+      "amaderado"
+    ],
+    "emoji": "🌸"
+  },
+  {
+    "name": "GIOVANNI PRO",
+    "sku": "H-63-GIOVANNIPRO",
+    "inspiration": "ACQUA DI GIO PROFUMO (Armani)",
+    "notes": "Incienso, Romero, Pachulí",
+    "description": "Versión más oscura y formal de AdG. Sofisticado y sereno.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "oriental",
+      "elegante"
+    ],
+    "emoji": "💃"
+  },
+  {
+    "name": "ULTRAMAN",
+    "sku": "H-62-ULTRAMAN",
+    "inspiration": "ULTRA MALE (JPG)",
+    "notes": "Pera, Vainilla, Canela",
+    "description": "Dulce, afrutado y extremadamente potente. Fragancia de fiesta por excelencia.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "frutal",
+      "intenso"
+    ],
+    "emoji": "🍭"
+  },
+  {
+    "name": "IRONIC",
+    "sku": "H-61-IRONIC",
+    "inspiration": "TOY BOY (Moschino)",
+    "notes": "Rosa, Pimienta Rosa, Sándalo",
+    "description": "Amaderado especiado con una curiosa y audaz nota de rosa. Masculino y único.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "floral",
+      "amaderado"
+    ],
+    "emoji": "🌸"
+  },
+  {
+    "name": "TOM",
+    "sku": "H-60-TOM",
+    "inspiration": "TOMMY HILFIGER",
+    "notes": "Manzana, Menta, Notas Acuáticas",
+    "description": "Fresco, limpio y deportivo. Un clásico americano de los 90.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "frutal",
+      "fresco",
+      "elegante"
+    ],
+    "emoji": "🌊"
+  },
+  {
+    "name": "SECRETARIO",
+    "sku": "H-59-SECRETARIO",
+    "inspiration": "THE GOLDEN SECRET",
+    "notes": "Ámbar, Vainilla, Madera",
+    "description": "Amberado dulce, cálido y muy sensual. Elegante y seductor.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "amaderado",
+      "oriental",
+      "sensual",
+      "elegante"
+    ],
+    "emoji": "🍭"
+  },
+  {
+    "name": "ARMY",
+    "sku": "H-58-ARMY",
+    "inspiration": "SWISS ARMY",
+    "notes": "Mandarina, Lavanda, Musk",
+    "description": "Fresco, limpio, confiable y muy asequible. Un básico infalible.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "fresco"
+    ],
+    "emoji": "🌊"
+  },
+  {
+    "name": "COSTELO",
+    "sku": "H-57-COSTELO",
+    "inspiration": "STYLE IN PLAY",
+    "notes": "Cítricos, Jengibre, Cedro",
+    "description": "Fresco, especiado y energético. Perfecto para el día a día.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "fresco",
+      "amaderado"
+    ],
+    "emoji": "🌊"
+  },
+  {
+    "name": "KING AURA",
+    "sku": "H-56-KINGAURA",
+    "inspiration": "SCANDAL POUR HOMME (JPG)",
+    "notes": "Miel, Tabaco, Pachulí",
+    "description": "Gourmand intenso, dulce y seductor. Potente y con carácter.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "oriental",
+      "sensual",
+      "intenso"
+    ],
+    "emoji": "🍭"
+  },
+  {
+    "name": "WILD DEEP",
+    "sku": "H-55-WILDDEEP",
+    "inspiration": "SAUVAGE (Dior)",
+    "notes": "Pimienta, Ambroxan, Cedro",
+    "description": "Best-seller moderno. Fresco, salvaje, amaderado y extremadamente potente.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "fresco",
+      "amaderado",
+      "juvenil",
+      "intenso"
+    ],
+    "emoji": "🌊"
+  },
+  {
+    "name": "SANTOS",
+    "sku": "H-54-SANTOS",
+    "inspiration": "SANTOS DE CARTIER",
+    "notes": "Albahaca, Limón, Almizcle",
+    "description": "Fresco, aromático y elegante. Un clásico masculino sofisticado.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "fresco",
+      "elegante"
+    ],
+    "emoji": "🌊"
+  },
+  {
+    "name": "FUTURISTIC",
+    "sku": "H-53-FUTURISTIC",
+    "inspiration": "PHANTOM (Paco Rabanne)",
+    "notes": "Limón, Manzana de Carolina, Vainilla",
+    "description": "Dulce, frutal y tecnológico. Famoso por su frasco en forma de robot.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "frutal",
+      "fresco"
+    ],
+    "emoji": "🍭"
+  },
+  {
+    "name": "NICKO",
+    "sku": "H-52-NICKO",
+    "inspiration": "PARIS HILTON FOR MEN",
+    "notes": "Menta, Cardamomo, Cedro",
+    "description": "Fresco, aromático y amaderado. Un clásico masculino accesible.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "fresco",
+      "amaderado",
+      "elegante"
+    ],
+    "emoji": "🌊"
+  },
+  {
+    "name": "TRUE ESSENCE",
+    "sku": "H-51-TRUEESSENCE",
+    "inspiration": "OHM",
+    "notes": "Cítricos, Jazmín, Sándalo",
+    "description": "Fragancia India. Fresca, herbal y ligeramente floral. Unisex.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "floral",
+      "fresco",
+      "amaderado"
+    ],
+    "emoji": "🌸"
+  },
+  {
+    "name": "KING ORANGE",
+    "sku": "H-50-KINGORANGE",
+    "inspiration": "ODYSSEY MANDARIN SKY",
+    "notes": "Mandarina, Vainilla, Almizcle",
+    "description": "Cítrico-dulce. Fresco y soleado con un fondo acogedor.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "fresco"
+    ],
+    "emoji": "🍭"
+  },
+  {
+    "name": "NAUTILUS",
+    "sku": "H-49-NAUTILUS",
+    "inspiration": "NAUTICA VOYAGE",
+    "notes": "Manzana, Menta, Cedro",
+    "description": "Acuático fresco por excelencia. Limpio, deportivo y muy popular.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "frutal",
+      "fresco",
+      "amaderado"
+    ],
+    "emoji": "🌊"
+  },
+  {
+    "name": "SAPPORO",
+    "sku": "H-48-SAPPORO",
+    "inspiration": "L'EAU D'ISSEY POUR HOMME",
+    "notes": "Yuzu, Notas Acuáticas, Madera de Cedro",
+    "description": "Icono acuático. Extremadamente fresco, limpio y vibrante.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "fresco",
+      "amaderado"
+    ],
+    "emoji": "🌊"
+  },
+  {
+    "name": "BELMONDO",
+    "sku": "H-47-BELMONDO",
+    "inspiration": "LE MALE (JPG)",
+    "notes": "Lavanda, Vainilla, Menta",
+    "description": "Icono de los 90. Dulce, fresco y seductor. Frasco de torso masculino.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "fresco",
+      "sensual"
+    ],
+    "emoji": "🍭"
+  },
+  {
+    "name": "TEMTING DAPPER",
+    "sku": "H-46-TEMTINGDAPPER",
+    "inspiration": "LE BEAU LE PARFUM (JPG)",
+    "notes": "Coco, Bergamota, Tonka",
+    "description": "Dulce, tropical y cremoso. Una versión más moderna y sofisticada de Le Male.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "frutal",
+      "fresco",
+      "cremoso"
+    ],
+    "emoji": "🍭"
+  },
+  {
+    "name": "ROMAN TRADITION",
+    "sku": "H-45-ROMANTRADITION",
+    "inspiration": "VALENTINO UOMO",
+    "notes": "Nata, Avellana, Cuero",
+    "description": "Gourmand elegante. Dulce, cremoso y sofisticado.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "elegante",
+      "cremoso"
+    ],
+    "emoji": "🍭"
+  },
+  {
+    "name": "BLACK ADVENTURE",
+    "sku": "H-44-BLACKADVENTURE",
+    "inspiration": "L'AVENTURE (Al Haramain)",
+    "notes": "Limón, Pimienta Negra, Madera",
+    "description": "Inspirado en Creed Aventus. Fresco, afrutado y ahumado.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "fresco",
+      "amaderado"
+    ],
+    "emoji": "🌊"
+  },
+  {
+    "name": "LEBLANC",
+    "sku": "H-43-LEBLANC",
+    "inspiration": "LACOSTE BLANC",
+    "notes": "Manzana, Albahaca, Almizcle",
+    "description": "Fresco, limpio y sporty. Elegante y casual a la vez.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "frutal",
+      "fresco",
+      "elegante"
+    ],
+    "emoji": "🌊"
+  },
+  {
+    "name": "INVICTO II",
+    "sku": "H-42-INVICTOII",
+    "inspiration": "INVICTUS (Paco Rabanne)",
+    "notes": "Pomelo, Hojas de Laurel, Ámbar Gris",
+    "description": "Dulce, amaderado y victorioso. Fragancia de poder y éxito.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "amaderado",
+      "oriental"
+    ],
+    "emoji": "🍭"
+  },
+  {
+    "name": "INTERLUDIO",
+    "sku": "H-41-INTERLUDIO",
+    "inspiration": "INTERLUDE MAN (Amouage)",
+    "notes": "Orégano, Ámbar, Oud",
+    "description": "Oriental intenso y complejo. Potente, especiado y majestuoso.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "oriental",
+      "intenso"
+    ],
+    "emoji": "🌟"
+  },
+  {
+    "name": "NEW EXTRAVAGANCE",
+    "sku": "H-40-NEWEXTRAVAGANCE",
+    "inspiration": "II KAKUNO DE ILMIN PARFUMS",
+    "notes": "Cítricos, Especias, Almizcle",
+    "description": "Aromático especiado fresco y elegante.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "fresco",
+      "oriental",
+      "elegante"
+    ],
+    "emoji": "🌊"
+  },
+  {
+    "name": "FOREVER",
+    "sku": "H-39-FOREVER",
+    "inspiration": "ETERNITY FOR MEN (Calvin Klein)",
+    "notes": "Lavanda, Salvia, Sándalo",
+    "description": "Fresco, aromático y limpio. Un clásico masculino confiable.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "fresco",
+      "amaderado",
+      "elegante"
+    ],
+    "emoji": "🌊"
+  },
+  {
+    "name": "EXODO",
+    "sku": "H-38-EXODO",
+    "inspiration": "ESCAPE FOR MEN (Calvin Klein)",
+    "notes": "Melón, Mango, Cardamomo",
+    "description": "Fresco, frutal y acuático. Relajante y veraniego.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "fresco"
+    ],
+    "emoji": "🌊"
+  },
+  {
+    "name": "PASSIONATE VEROS",
+    "sku": "H-37-PASSIONATEVEROS",
+    "inspiration": "EROS FLAME (Versace)",
+    "notes": "Mandarina, Pimienta, Vainilla de Madagascar",
+    "description": "Versión más especiada y ardiente de Eros. Intensa y seductora.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "sensual"
+    ],
+    "emoji": "💃"
+  },
+  {
+    "name": "VEROS",
+    "sku": "H-36-VEROS",
+    "inspiration": "EROS (Versace)",
+    "notes": "Menta, Vainilla, Madera de Sándalo",
+    "description": "Dulce, mentolado y potente. Fragancia juvenil y de fiesta.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "amaderado",
+      "juvenil",
+      "intenso"
+    ],
+    "emoji": "🍭"
+  },
+  {
+    "name": "YOUNGER",
+    "sku": "H-35-YOUNGER",
+    "inspiration": "STRONGER WITH YOU (Armani)",
+    "notes": "Castaña, Cardamomo, Vainilla",
+    "description": "Gourmand dulce y especiado. Acogedor, moderno y adictivo.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "juvenil"
+    ],
+    "emoji": "🍭"
+  },
+  {
+    "name": "UPPERCUT PUNCH",
+    "sku": "H-34-UPPERCUTPUNCH",
+    "inspiration": "DIOR HOMME SPORT",
+    "notes": "Jengibre, Neroli, Almizcle",
+    "description": "Cítrico-especiado fresco y energético. Elegante y deportivo.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "fresco",
+      "elegante"
+    ],
+    "emoji": "🌊"
+  },
+  {
+    "name": "LATTE FOURGERE",
+    "sku": "H-33-LATTEFOURGERE",
+    "inspiration": "DIESEL PLUS PLUS",
+    "notes": "Leche, Vainilla, Sándalo",
+    "description": "Gourmand lácteo único. Suave, dulce y reconfortante.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "amaderado",
+      "cremoso"
+    ],
+    "emoji": "🍭"
+  },
+  {
+    "name": "CARTER",
+    "sku": "H-32-CARTER",
+    "inspiration": "DECLARATION (Cartier)",
+    "notes": "Cáscara de Naranja, Cardamomo, Madera de Cedro",
+    "description": "Aromático especiado sofisticado. Elegante y cálido.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "amaderado",
+      "elegante"
+    ],
+    "emoji": "💃"
+  },
+  {
+    "name": "CLUB DE NUEZ INTENSA",
+    "sku": "H-31-CLUBDENUEZINTENSA",
+    "inspiration": "CLUB DE NUIT INTENSE MAN",
+    "notes": "Limón, Abedul, Musk",
+    "description": "Inspirado en Creed Aventus. Afrutado, ahumado y potente.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "fresco",
+      "intenso"
+    ],
+    "emoji": "💃"
+  },
+  {
+    "name": "OFFLINE",
+    "sku": "H-30-OFFLINE",
+    "inspiration": "CK IN2U FOR HIM",
+    "notes": "Pomelo, Jengibre, Cedro",
+    "description": "Fresco, amaderado y juvenil. Para la generación conectada.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "fresco",
+      "amaderado",
+      "juvenil"
+    ],
+    "emoji": "🌊"
+  },
+  {
+    "name": "NATURE CONNECTION",
+    "sku": "H-29-NATURECONNECTION",
+    "inspiration": "BVLGARI MAN WOOD ESSENCE",
+    "notes": "Cedro, Vetiver, Sándalo",
+    "description": "Amaderado seco, aromático y elegante. Sofisticado y natural.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "amaderado",
+      "elegante"
+    ],
+    "emoji": "🌳"
+  },
+  {
+    "name": "GENESIS",
+    "sku": "H-28-GENESIS",
+    "inspiration": "BVLGARI POUR HOMME",
+    "notes": "Té, Pimienta Negra, Musk",
+    "description": "Aromático fresco y amaderado. Limpio, elegante y discreto.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "fresco",
+      "amaderado",
+      "elegante"
+    ],
+    "emoji": "🌊"
+  },
+  {
+    "name": "BLACKMAN",
+    "sku": "H-27-BLACKMAN",
+    "inspiration": "BVLGARI MAN IN BLACK",
+    "notes": "Ron, Tuberosa, Sándalo",
+    "description": "Oriental especiado y boozy. Audaz, sensual y moderno.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "floral",
+      "amaderado",
+      "oriental",
+      "sensual",
+      "juvenil"
+    ],
+    "emoji": "🌟"
+  },
+  {
+    "name": "BLUME",
+    "sku": "H-26-BLUME",
+    "inspiration": "BLV POUR HOMME (Bvlgari)",
+    "notes": "Jengibre, Sándalo, Musk",
+    "description": "Aromático amaderado fresco y ligero. Profesional y limpio.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "fresco",
+      "amaderado"
+    ],
+    "emoji": "🌊"
+  },
+  {
+    "name": "SENDOA",
+    "sku": "H-25-SENDOA",
+    "inspiration": "BLUE SEDUCTION (Antonio Banderas)",
+    "notes": "Menta, Agua de Mar, Madera",
+    "description": "Acuático fresco y deportivo. Muy asequible y popular.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "fresco",
+      "amaderado"
+    ],
+    "emoji": "🌊"
+  },
+  {
+    "name": "BLUNEL",
+    "sku": "H-24-BLUNEL",
+    "inspiration": "BLEU DE CHANEL",
+    "notes": "Pomelo, Jengibre, Sándalo",
+    "description": "Best-seller versátil. Fresco, amaderado y exquisitamente elegante.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "fresco",
+      "amaderado",
+      "elegante"
+    ],
+    "emoji": "🌊"
+  },
+  {
+    "name": "REY DEL MAMBO",
+    "sku": "H-23-REYDELMAMBO",
+    "inspiration": "BHARARA KING",
+    "notes": "Oud, Azafrán, Sándalo",
+    "description": "Oriental intenso y especiado. Lujoso y potente.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "amaderado",
+      "oriental",
+      "intenso"
+    ],
+    "emoji": "🌟"
+  },
+  {
+    "name": "BOLD FLASH",
+    "sku": "H-22-BOLDFLASH",
+    "inspiration": "BAD BOY (Carolina Herrera)",
+    "notes": "Pimienta Negra, Cacao, Cedro",
+    "description": "Oriental amaderado picante. Audaz, eléctrico y moderno.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "amaderado",
+      "oriental",
+      "juvenil"
+    ],
+    "emoji": "🌳"
+  },
+  {
+    "name": "AZORIN",
+    "sku": "H-21-AZORIN",
+    "inspiration": "AZZARO POUR HOMME",
+    "notes": "Anís, Lavanda, Musgo de Roble",
+    "description": "Aromático herbal clásico. Barbero, elegante y atemporal.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "elegante"
+    ],
+    "emoji": "💃"
+  },
+  {
+    "name": "EVENTO",
+    "sku": "H-20-EVENTO",
+    "inspiration": "AVENTUS (Creed)",
+    "notes": "Piña, Abedul, Musk",
+    "description": "Icono de niche. Afrutado, ahumado y majestuoso. Símbolo de éxito.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer"
+    ],
+    "emoji": "💃"
+  },
+  {
+    "name": "FAITHFUL FELLOW",
+    "sku": "H-19-FAITHFULFELLOW",
+    "inspiration": "AUTHENTIC MAN",
+    "notes": "Cítricos, Notas Acuáticas, Almizcle",
+    "description": "Fresco, limpio y acuático. Confiable y fácil de usar.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "fresco"
+    ],
+    "emoji": "🌊"
+  },
+  {
+    "name": "WARM SPICE",
+    "sku": "H-18-WARMSPICE",
+    "inspiration": "ASAD (Lattafa)",
+    "notes": "Regaliz, Pimienta Negra, Vainilla",
+    "description": "Inspirado en Sauvage Elixir. Oriental especiado, dulce e intenso.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "oriental",
+      "intenso"
+    ],
+    "emoji": "🍭"
+  },
+  {
+    "name": "CODIGO",
+    "sku": "H-17-CODIGO",
+    "inspiration": "ARMANI CODE",
+    "notes": "Limón, Aceite de Oliva, Tabaco",
+    "description": "Oriental suave y seductor. Elegante, sensual y moderno.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "fresco",
+      "oriental",
+      "sensual",
+      "elegante",
+      "juvenil",
+      "cremoso"
+    ],
+    "emoji": "🌟"
+  },
+  {
+    "name": "AQVARIUM",
+    "sku": "H-16-AQVARIUM",
+    "inspiration": "AQVA POUR HOMME (Bvlgari)",
+    "notes": "Mandarina, Alga Marina, Cedro",
+    "description": "Acuático marino por excelencia. Fresco, salado y robusto.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "fresco",
+      "amaderado"
+    ],
+    "emoji": "🌊"
+  },
+  {
+    "name": "SANSON",
+    "sku": "H-15-SANSON",
+    "inspiration": "ANIMALE FOR MEN",
+    "notes": "Melón, Pachulí, Almizcle",
+    "description": "Amaderado especiado de los 90. Potente y característico.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "amaderado",
+      "oriental",
+      "intenso"
+    ],
+    "emoji": "🌳"
+  },
+  {
+    "name": "ALLEGRO",
+    "sku": "H-14-ALLEGRO",
+    "inspiration": "ALLURE HOMME SPORT (Chanel)",
+    "notes": "Mandarina, Pimienta, Vetiver",
+    "description": "Cítrico-amaderado fresco y elegante. Deportivo de lujo.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "fresco",
+      "amaderado",
+      "elegante"
+    ],
+    "emoji": "🌊"
+  },
+  {
+    "name": "INVIGORATING GIOVANNI",
+    "sku": "H-13-INVIGORATINGGIOVANNI",
+    "inspiration": "ACQUA DI GIO PROFONDO (Armani)",
+    "notes": "Cítricos, Menta, Pachulí",
+    "description": "Versión más profunda y acuática de AdG. Fresca y herbácea.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "fresco",
+      "oriental"
+    ],
+    "emoji": "💃"
+  },
+  {
+    "name": "AT NIGHTFALL",
+    "sku": "H-12-ATNIGHTFALL",
+    "inspiration": "9PM (Afnan)",
+    "notes": "Pera, Vainilla, Lavanda",
+    "description": "Inspirado en JPG Ultra Male. Dulce, afrutado y muy potente.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "frutal",
+      "intenso"
+    ],
+    "emoji": "🍭"
+  },
+  {
+    "name": "ACQUA FRESCA",
+    "sku": "H-11-ACQUAFRESCA",
+    "inspiration": "ACQUA DI GIO (Armani)",
+    "notes": "Notas Marinas, Jazmín, Almizcle",
+    "description": "Padre de las acuáticas modernas. Fresco, limpio y eterno.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "floral",
+      "fresco"
+    ],
+    "emoji": "🌊"
+  },
+  {
+    "name": "NIGHFALLED",
+    "sku": "H-10-NIGHFALLED",
+    "inspiration": "9 PM AFNAN",
+    "notes": "Pera, Vainilla, Lavanda",
+    "description": "Dupe de Ultra Male. Dulce y explosivo para la noche.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "frutal"
+    ],
+    "emoji": "🍭"
+  },
+  {
+    "name": "EPIC TOUCH DOWN",
+    "sku": "H-9-EPICTOUCHDOWN",
+    "inspiration": "212 VIP MEN WINS (CH)",
+    "notes": "Manzana Verde, Cardamomo, Ámbar",
+    "description": "Fresco, especiado y ambarino. Energético y optimista.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "frutal",
+      "fresco",
+      "oriental"
+    ],
+    "emoji": "🌊"
+  },
+  {
+    "name": "VICARO",
+    "sku": "H-8-VICARO",
+    "inspiration": "212 VIP MEN (CH)",
+    "notes": "Menta, Cardamomo, Ámbar",
+    "description": "La versión masculina de VIP. Fresca, especiada y ambarina.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "oriental"
+    ],
+    "emoji": "💃"
+  },
+  {
+    "name": "URBAN KING",
+    "sku": "H-7-URBANKING",
+    "inspiration": "212 VIP BLACK NY (CH)",
+    "notes": "Ciruela, Lavanda, Cuero",
+    "description": "Versión neoyorquina, más oscura y sofisticada.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer"
+    ],
+    "emoji": "💃"
+  },
+  {
+    "name": "KING OF PARTIES",
+    "sku": "H-6-KINGOFPARTIES",
+    "inspiration": "212 VIP BLACK (CH)",
+    "notes": "Ciruela, Flor de Naranjo, Ámbar",
+    "description": "Versión masculina oscura y misteriosa de VIP.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "oriental"
+    ],
+    "emoji": "💃"
+  },
+  {
+    "name": "SEXY MAN",
+    "sku": "H-5-SEXYMAN",
+    "inspiration": "212 SEXY MEN (CH)",
+    "notes": "Lavanda, Cuero, Vainilla",
+    "description": "Versión sensual y ambarina de 212 para hombres.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "sensual"
+    ],
+    "emoji": "💃"
+  },
+  {
+    "name": "ADRIAN",
+    "sku": "H-4-ADRIAN",
+    "inspiration": "212 MEN (CH)",
+    "notes": "Hoja de Violeta, Ginger, Musk",
+    "description": "Fresco, verde y urbano. Icono masculino de los 90.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "fresco"
+    ],
+    "emoji": "🌊"
+  },
+  {
+    "name": "PURE FREEDOM",
+    "sku": "H-3-PUREFREEDOM",
+    "inspiration": "212 HEROES (CH)",
+    "notes": "Menta, Pomelo Rosa, Almizcle",
+    "description": "Fresco, energético y juvenil. La esencia de la libertad.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "floral",
+      "fresco",
+      "juvenil"
+    ],
+    "emoji": "🌊"
+  },
+  {
+    "name": "ADDICTIVE VIBE",
+    "sku": "H-2-ADDICTIVEVIBE",
+    "inspiration": "1 MILLION LUCKY (Paco Rabanne)",
+    "notes": "Avellana, Ciruela, Cedro",
+    "description": "Versión más frutal y amaderada de 1 Million. Adictiva.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "amaderado"
+    ],
+    "emoji": "💃"
+  },
+  {
+    "name": "MILXMIL",
+    "sku": "H-1-MILXMIL",
+    "inspiration": "1 MILLION (Paco Rabanne)",
+    "notes": "Cuero, Menta, Sangría",
+    "description": "Best-seller ultra-dulce y especiado. Símbolo de fiesta y exceso.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand"
+    ],
+    "emoji": "🍭"
+  },
+  {
+    "name": "STREET",
+    "sku": "U-54-STREET",
+    "inspiration": "BOND No 9 - Lafayette St.",
+    "notes": "Fresa, Frambuesa, Rosa",
+    "description": "Gourmand frutal extravagante y moderno.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "frutal",
+      "floral",
+      "juvenil"
+    ],
+    "emoji": "🍰"
+  },
+  {
+    "name": "HERSHEL",
+    "sku": "U-53-HERSHEL",
+    "inspiration": "PDM - Layton",
+    "notes": "Manzana, Lavanda, Vainilla",
+    "description": "Oriental amaderado dulce y especiado. Masculino elegante.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "frutal",
+      "amaderado",
+      "oriental",
+      "elegante"
+    ],
+    "emoji": "🍭"
+  },
+  {
+    "name": "SUMMER MALLET",
+    "sku": "U-52-SUMMERMALLET",
+    "inspiration": "SUMMER HAMMER",
+    "notes": "Cítricos, Menta, Almizcle",
+    "description": "Aroma fresco, verde y limpio. Perfecto para verano.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "fresco"
+    ],
+    "emoji": "🌊"
+  },
+  {
+    "name": "EVENING CAFÉ",
+    "sku": "U-51-EVENINGCAFÉ",
+    "inspiration": "KHAMRAH QAHWA",
+    "notes": "Café, Cardamomo, Vainilla",
+    "description": "Gourmand oriental intenso con una prominente nota de café.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "oriental",
+      "intenso"
+    ],
+    "emoji": "🍰"
+  },
+  {
+    "name": "MAGADASCAN TREASURE",
+    "sku": "U-50-MAGADASCANTREASURE",
+    "inspiration": "VANILLE ROUGE",
+    "notes": "Vainilla, Heliotropo, Almizcle",
+    "description": "Gourmand vainillado intenso y cremoso.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "intenso",
+      "cremoso"
+    ],
+    "emoji": "🍰"
+  },
+  {
+    "name": "TANSUK",
+    "sku": "U-49-TANSUK",
+    "inspiration": "TANASUK",
+    "notes": "Oud, Rosa, Azafrán",
+    "description": "Oriental intenso de Oriente Medio. Lujoso y potente.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "floral",
+      "oriental",
+      "intenso"
+    ],
+    "emoji": "🌟"
+  },
+  {
+    "name": "JAVA SCRIT",
+    "sku": "U-48-JAVASCRIT",
+    "inspiration": "SUN JAVA ROSE OUD",
+    "notes": "Café, Rosa, Oud",
+    "description": "Combinación única de café, rosa y oud. Potente y exótico.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "floral",
+      "intenso"
+    ],
+    "emoji": "🌸"
+  },
+  {
+    "name": "WARM SILLAGE",
+    "sku": "U-47-WARMSILLAGE",
+    "inspiration": "STARRY NIGHTS",
+    "notes": "Vainilla, Ámbar, Almizcle",
+    "description": "Amberado cálido, dulce y muy acogedor.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "oriental"
+    ],
+    "emoji": "🍭"
+  },
+  {
+    "name": "SILVER Y & C",
+    "sku": "U-46-SILVERYC",
+    "inspiration": "SILVER MOUNTAIN WATER",
+    "notes": "Cítricos, Té Verde, Musk",
+    "description": "Aroma fresco, metálico y acuático. Icono de niche.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "fresco"
+    ],
+    "emoji": "🌊"
+  },
+  {
+    "name": "SACRED GRACE",
+    "sku": "U-45-SACREDGRACE",
+    "inspiration": "SANTAL PAO ROSA",
+    "notes": "Sándalo, Rosa, Vainilla",
+    "description": "Amaderado cremoso y rosado. Elegante y unisex.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "floral",
+      "amaderado",
+      "elegante",
+      "cremoso"
+    ],
+    "emoji": "🌸"
+  },
+  {
+    "name": "URBAN RANGER",
+    "sku": "U-44-URBANRANGER",
+    "inspiration": "SANTAL 33",
+    "notes": "Pimienta, Cuero, Sándalo",
+    "description": "Amaderado iconicón. \"Olor a cuero nuevo y madera\".",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "amaderado"
+    ],
+    "emoji": "🌳"
+  },
+  {
+    "name": "ORIENTE ROYAL",
+    "sku": "U-43-ORIENTEROYAL",
+    "inspiration": "ROYAL AMBER",
+    "notes": "Ámbar, Vainilla, Incienso",
+    "description": "Amberado oriental intenso, cálido y especiado.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "oriental",
+      "intenso"
+    ],
+    "emoji": "🌟"
+  },
+  {
+    "name": "HANAFI",
+    "sku": "U-42-HANAFI",
+    "inspiration": "OUDGASM TOBACCO",
+    "notes": "Tabaco, Vainilla, Oud",
+    "description": "Oriental tabacalero dulce y intenso.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "oriental",
+      "intenso"
+    ],
+    "emoji": "🍭"
+  },
+  {
+    "name": "BEAUTIFUL VERSATILITY",
+    "sku": "U-41-BEAUTIFULVERSATILITY",
+    "inspiration": "OUD SAFFRON",
+    "notes": "Azafrán, Oud, Rosa",
+    "description": "Oriental especiado y intenso. Majestuoso.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "floral",
+      "oriental",
+      "intenso"
+    ],
+    "emoji": "🌟"
+  },
+  {
+    "name": "SUCCULENT CHERRIES",
+    "sku": "U-40-SUCCULENTCHERRIES",
+    "inspiration": "BURNING CHERRY",
+    "notes": "Cereza, Almizcle, Vainilla",
+    "description": "Gourmand frutal con una nota intensa de cereza licorada.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand"
+    ],
+    "emoji": "🍰"
+  },
+  {
+    "name": "GOLD SHIMMER",
+    "sku": "U-39-GOLDSHIMMER",
+    "inspiration": "LAMAR KAJAL",
+    "notes": "Azafrán, Oud, Vainilla",
+    "description": "Oriental opulento y dorado. Muy intenso.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "oriental",
+      "intenso"
+    ],
+    "emoji": "🌟"
+  },
+  {
+    "name": "SUMPTUOUS WARMITH",
+    "sku": "U-38-SUMPTUOUSWARMITH",
+    "inspiration": "KHAMRAH",
+    "notes": "Canela, Dátil, Vainilla",
+    "description": "Gourmand oriental especiado. Similar a Angel's Share.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "oriental"
+    ],
+    "emoji": "🍰"
+  },
+  {
+    "name": "COSY EXPRESSO",
+    "sku": "U-37-COSYEXPRESSO",
+    "inspiration": "INTENSE CAFÉ",
+    "notes": "Café, Rosa, Vainilla",
+    "description": "Gourmand con una realista nota de café y un fondo floral.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "floral"
+    ],
+    "emoji": "🍰"
+  },
+  {
+    "name": "SENSORIAL EMOTION",
+    "sku": "U-36-SENSORIALEMOTION",
+    "inspiration": "IL ORGASME",
+    "notes": "Cítricos, Jazmín, Almizcle",
+    "description": "Floral almizclado limpio y sensual.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "floral",
+      "fresco",
+      "sensual"
+    ],
+    "emoji": "🌸"
+  },
+  {
+    "name": "GEL",
+    "sku": "U-35-GEL",
+    "inspiration": "IL EGO",
+    "notes": "Bergamota, Pimienta, Ámbar",
+    "description": "Ambarino fresco y especiado. Elegante.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "fresco",
+      "oriental",
+      "elegante"
+    ],
+    "emoji": "🌊"
+  },
+  {
+    "name": "INTOXICATING REVERIE",
+    "sku": "U-34-INTOXICATINGREVERIE",
+    "inspiration": "II FEMME",
+    "notes": "Albaricoque, Flor de Naranjo, Vainilla",
+    "description": "Floral frutal suave y solar.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "floral",
+      "cremoso"
+    ],
+    "emoji": "🌸"
+  },
+  {
+    "name": "INDELIBLE TRACE",
+    "sku": "U-33-INDELIBLETRACE",
+    "inspiration": "HOMBRE NOMADE",
+    "notes": "Cuero, Té, Vainilla",
+    "description": "Ambarino seco y aventurero.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand"
+    ],
+    "emoji": "💃"
+  },
+  {
+    "name": "MACAIRE",
+    "sku": "U-32-MACAIRE",
+    "inspiration": "GOD OF FIRE",
+    "notes": "Fresa, Jazmín, Sándalo",
+    "description": "Floral frutal tropical y luminoso.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "frutal",
+      "floral",
+      "amaderado"
+    ],
+    "emoji": "🥥"
+  },
+  {
+    "name": "JUEGO DE ESEPADAS",
+    "sku": "U-31-JUEGODEESEPADAS",
+    "inspiration": "GAME OF SPADES ROYALE",
+    "notes": "Lavanda, Vainilla, Almizcle",
+    "description": "Oriental amaderado suave y adictivo.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "amaderado",
+      "oriental",
+      "cremoso"
+    ],
+    "emoji": "🌳"
+  },
+  {
+    "name": "EMIRATO 7",
+    "sku": "U-30-EMIRATO7",
+    "inspiration": "FUYAIRA",
+    "notes": "Oud, Azafrán, Rosa",
+    "description": "Oriental intenso y lujoso de la familia de Baccarat.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "floral",
+      "oriental",
+      "intenso"
+    ],
+    "emoji": "🌟"
+  },
+  {
+    "name": "PURA HIERBA",
+    "sku": "U-29-PURAHIERBA",
+    "inspiration": "ERBA PURA",
+    "notes": "Piña, Cítricos, Almizcle",
+    "description": "Fragancia solar, frutal y extremadamente persistente.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "fresco"
+    ],
+    "emoji": "💃"
+  },
+  {
+    "name": "EAU EPICE ART",
+    "sku": "U-28-EAUEPICEART",
+    "inspiration": "EAU DE CARTIER",
+    "notes": "Cítricos, Especias, Almizcle",
+    "description": "Aromático especiado fresco y elegante.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "fresco",
+      "oriental",
+      "elegante"
+    ],
+    "emoji": "🌊"
+  },
+  {
+    "name": "CLUB DE NUEZ NIEVE",
+    "sku": "U-27-CLUBDENUEZNIEVE",
+    "inspiration": "CLUB DE NUIT SILLAGE",
+    "notes": "Limón, Manzana, Musk",
+    "description": "Inspirado en SMW. Fresco, metálico y limpio.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "frutal",
+      "fresco"
+    ],
+    "emoji": "🌊"
+  },
+  {
+    "name": "THETIS",
+    "sku": "U-26-THETIS",
+    "inspiration": "CLUB DE NUIT MILESTONE",
+    "notes": "Melón, Sal, Musk",
+    "description": "Inspirado en Millésime Impérial. Acuático salino.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer"
+    ],
+    "emoji": "💃"
+  },
+  {
+    "name": "LIDER",
+    "sku": "U-25-LIDER",
+    "inspiration": "CK ONE",
+    "notes": "Pina, Papaya, Musk",
+    "description": "Icono unisex de los 90. Fresco, cítrico y limpio.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "fresco"
+    ],
+    "emoji": "🌊"
+  },
+  {
+    "name": "TIBER",
+    "sku": "U-24-TIBER",
+    "inspiration": "CK BE",
+    "notes": "Musgo, Sándalo, Almizcle",
+    "description": "Versión más oscura y amaderada de CK One.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "amaderado"
+    ],
+    "emoji": "💃"
+  },
+  {
+    "name": "WEB NET",
+    "sku": "U-23-WEBNET",
+    "inspiration": "BOND N 9.COM",
+    "notes": "Bergamota, Jazmín, Sándalo",
+    "description": "Floral amaderado moderno y digital.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "floral",
+      "fresco",
+      "amaderado",
+      "juvenil"
+    ],
+    "emoji": "🌸"
+  },
+  {
+    "name": "KARYI",
+    "sku": "U-22-KARYI",
+    "inspiration": "BLEECKER STREET",
+    "notes": "Moras, Pachulí, Sándalo",
+    "description": "Amaderado frutal fresco. Huele a parque after rain.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "fresco",
+      "amaderado",
+      "oriental"
+    ],
+    "emoji": "🌊"
+  },
+  {
+    "name": "BARBARA",
+    "sku": "U-21-BARBARA",
+    "inspiration": "BHARARA NICHE",
+    "notes": "Oud, Rosa, Azafrán",
+    "description": "Oriental de lujo intenso y complejo.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "floral",
+      "oriental",
+      "intenso"
+    ],
+    "emoji": "🌟"
+  },
+  {
+    "name": "CAPTIVATING BLEND",
+    "sku": "U-20-CAPTIVATINGBLEND",
+    "inspiration": "BADE'E AL OUD SUBLIME",
+    "notes": "Oud, Azafrán, Rosa",
+    "description": "Oud intenso, dulce y especiado. Lujoso.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "floral",
+      "intenso"
+    ],
+    "emoji": "🍭"
+  },
+  {
+    "name": "HONORED BLEND",
+    "sku": "U-19-HONOREDBLEND",
+    "inspiration": "BADE'E AL OUD HONOR & GLORY",
+    "notes": "Oud, Rosa, Almizcle",
+    "description": "Oud cremoso y rosado. Menos animalico, más suave.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "floral",
+      "cremoso"
+    ],
+    "emoji": "🌸"
+  },
+  {
+    "name": "GLORIA POR SIEMPRE",
+    "sku": "U-18-GLORIAPORSIEMPRE",
+    "inspiration": "BADE'E AL OUD FOR GLORY",
+    "notes": "Oud, Azafrán, Vainilla",
+    "description": "Oud dulce y especiado. Potente y duradero.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "intenso"
+    ],
+    "emoji": "🍭"
+  },
+  {
+    "name": "KURAT",
+    "sku": "U-17-KURAT",
+    "inspiration": "BACCARAT ROUGE 540",
+    "notes": "Azafrán, Madera de Cedro, Almizcle Ambarino",
+    "description": "Icono de niche. Dulce, amaderado y adictivo. \"Aire azucarado\".",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "amaderado"
+    ],
+    "emoji": "🍭"
+  },
+  {
+    "name": "IANTE",
+    "sku": "U-16-IANTE",
+    "inspiration": "AZLAN OUD BLUE EDITION",
+    "notes": "Oud, Cítricos, Almizcle",
+    "description": "Oud fresco y cítrico. Menos intenso, más accesible.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "fresco",
+      "intenso"
+    ],
+    "emoji": "🌊"
+  },
+  {
+    "name": "DAREA",
+    "sku": "U-15-DAREA",
+    "inspiration": "ATOMIC ROSE",
+    "notes": "Rosa, Pimienta Rosa, Vainilla",
+    "description": "Floral rosado extremo, potente y especiado.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "floral",
+      "intenso"
+    ],
+    "emoji": "🌸"
+  },
+  {
+    "name": "MAPS",
+    "sku": "U-14-MAPS",
+    "inspiration": "ATLAS",
+    "notes": "Flor de Naranjo, Vainilla, Almizcle",
+    "description": "Floral oriental suave y solar.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "floral",
+      "oriental",
+      "cremoso"
+    ],
+    "emoji": "🌸"
+  },
+  {
+    "name": "AUDACIOUS TEMPERAMENT",
+    "sku": "U-13-AUDACIOUSTEMPERAMENT",
+    "inspiration": "ARABIANS TONKA",
+    "notes": "Tonka, Vainilla, Almizcle",
+    "description": "Gourmand cálido y especiado. Muy acogedor.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "frutal"
+    ],
+    "emoji": "🍰"
+  },
+  {
+    "name": "DEEP DIMENSION",
+    "sku": "U-12-DEEPDIMENSION",
+    "inspiration": "ANGELS' SHARE",
+    "notes": "Coñac, Canela, Roble",
+    "description": "Gourmand boozy y especiado. Elegante y único.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "elegante"
+    ],
+    "emoji": "🍰"
+  },
+  {
+    "name": "SUMPTUOS QUARTZ",
+    "sku": "U-11-SUMPTUOSQUARTZ",
+    "inspiration": "AMETHYST BADE'E AL OUD",
+    "notes": "Oud, Vainilla, Almizcle",
+    "description": "Oud suave y vainillado. Aterciopelado.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "cremoso"
+    ],
+    "emoji": "🍰"
+  },
+  {
+    "name": "ORIENTE ROUGE",
+    "sku": "U-10-ORIENTEROUGE",
+    "inspiration": "AMBER ROUGE",
+    "notes": "Ámbar, Vainilla, Resinas",
+    "description": "Amberado cálido, balsámico y profundo.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "oriental",
+      "intenso"
+    ],
+    "emoji": "💃"
+  },
+  {
+    "name": "MOLINO ROJO",
+    "sku": "U-9-MOLINOROJO",
+    "inspiration": "AMBER OUD ROUGE",
+    "notes": "Frutos Rojos, Azafrán, Oud",
+    "description": "Oud frutal y dulce. Versión de BR540.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand"
+    ],
+    "emoji": "🍭"
+  },
+  {
+    "name": "REFINED ELIXIR",
+    "sku": "U-8-REFINEDELIXIR",
+    "inspiration": "AMBER OUD GOLD EDITION",
+    "notes": "Azafrán, Oud, Vainilla",
+    "description": "Oud dorado, dulce y especiado. Lujoso.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand"
+    ],
+    "emoji": "🍭"
+  },
+  {
+    "name": "LEGENDARY GEM",
+    "sku": "U-7-LEGENDARYGEM",
+    "inspiration": "ALMAZ DE KAJAL",
+    "notes": "Oud, Rosa, Azafrán",
+    "description": "Oud floral y especiado. Opulento.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "floral"
+    ],
+    "emoji": "🌸"
+  },
+  {
+    "name": "PIUM PIUM",
+    "sku": "U-6-PIUMPIUM",
+    "inspiration": "AJWAD PINK TO PINK",
+    "notes": "Rosa, Vainilla, Almizcle",
+    "description": "Floral dulce y polvorento. Muy femenino.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "gourmand",
+      "floral"
+    ],
+    "emoji": "🍭"
+  },
+  {
+    "name": "EMIRATO 4",
+    "sku": "U-5-EMIRATO4",
+    "inspiration": "AJMAN",
+    "notes": "Oud, Rosa, Almizcle",
+    "description": "Oud cremoso y de alta calidad. Elegante.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "floral",
+      "elegante",
+      "cremoso"
+    ],
+    "emoji": "💃"
+  },
+  {
+    "name": "VEGASCOOL",
+    "sku": "U-4-VEGASCOOL",
+    "inspiration": "AHLI VEGA",
+    "notes": "Cítricos, Menta, Almizcle",
+    "description": "Fresco, acuático y limpio. Energético.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "fresco"
+    ],
+    "emoji": "🌊"
+  },
+  {
+    "name": "KARALHY II",
+    "sku": "U-3-KARALHYII",
+    "inspiration": "AHLI KARPOS",
+    "notes": "Higo, Lirio, Almizcle",
+    "description": "Amaderado verde y figuado. Natural y elegante.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "amaderado",
+      "elegante"
+    ],
+    "emoji": "🌳"
+  },
+  {
+    "name": "EMIRATO 1",
+    "sku": "U-2-EMIRATO1",
+    "inspiration": "ABU DHABI",
+    "notes": "Oud, Azafrán, Sándalo",
+    "description": "Oud puro, seco y amaderado. Tradicional.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "amaderado"
+    ],
+    "emoji": "🌳"
+  },
+  {
+    "name": "BLUE DAYLIGHT",
+    "sku": "U-1-BLUEDAYLIGHT",
+    "inspiration": "9AM DIVE",
+    "notes": "Manzana, Bergamota, Almizcle",
+    "description": "Acuático fresco y frutal. Para el día.",
+    "gender": "mujer",
+    "keywords": [
+      "mujer",
+      "frutal",
+      "fresco"
+    ],
+    "emoji": "🌊"
+  }
+];
+        
+        const chatMessages = document.getElementById('chat-messages');
+        const userInput = document.getElementById('user-input');
+        const sendBtn = document.getElementById('send-btn');
+        
+        function addMessage(message, isUser) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message');
+            messageDiv.classList.add(isUser ? 'user-message' : 'bot-message');
+            
+            // Formatear mensajes con markdown básico
+            if (message.includes('**')) {
+                const formattedMessage = message.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                messageDiv.innerHTML = formattedMessage;
+            } else {
+                messageDiv.textContent = message;
+            }
+            
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        function analyzeUserInput(message) {
+            const lowerMessage = message.toLowerCase();
+            const analysis = {
+                gender: [],
+                fragrance: [],
+                occasion: [],
+                time: [],
+                mood: [],
+                intensity: [],
+                season: []
+            };
+            
+            // Detectar género
+            if (lowerMessage.includes('mujer') || lowerMessage.includes('femenino') || lowerMessage.includes('ella') || lowerMessage.includes('femenina')) analysis.gender.push('mujer');
+            if (lowerMessage.includes('hombre') || lowerMessage.includes('masculino') || lowerMessage.includes('él') || lowerMessage.includes('masculina')) analysis.gender.push('hombre');
+            if (lowerMessage.includes('unisex') || lowerMessage.includes('ambos') || lowerMessage.includes('cualquiera') || lowerMessage.includes('para todos')) analysis.gender.push('unisex');
+            
+            // Detectar notas específicas mencionadas
+            const specificNotes = {
+                'manzana': 'frutal', 'frambuesa': 'frutal', 'coco': 'frutal', 'tropical': 'frutal',
+                'rosa': 'floral', 'jazmín': 'floral', 'lirio': 'floral', 'flores': 'floral',
+                'vainilla': 'gourmand', 'caramelo': 'gourmand', 'chocolate': 'gourmand', 'dulce': 'gourmand',
+                'cedro': 'amaderado', 'sándalo': 'amaderado', 'oud': 'amaderado', 'madera': 'amaderado',
+                'bergamota': 'fresco', 'limón': 'fresco', 'cítrico': 'fresco', 'menta': 'fresco',
+                'ámbar': 'oriental', 'especias': 'oriental', 'azafrán': 'oriental',
+                'almizcle': 'almizcle', 'musk': 'almizcle'
+            };
+            
+            Object.keys(specificNotes).forEach(note => {
+                if (lowerMessage.includes(note)) {
+                    analysis.fragrance.push(specificNotes[note]);
+                }
+            });
+            
+            // Detectar características de fragancia y notas específicas
+            const fragranceMap = {
+                fresco: ['fresco', 'cítrico', 'limón', 'bergamota', 'marino', 'acuático', 'menta', 'limpio', 'cítricos'],
+                floral: ['floral', 'rosa', 'jazmín', 'flores', 'jardín', 'lirio', 'peonía', 'primaveral', 'flor de naranjo'],
+                gourmand: ['dulce', 'vainilla', 'caramelo', 'chocolate', 'gourmand', 'tonka', 'miel', 'azúcar', 'vainillin', 'algodón de azúcar'],
+                frutal: ['frutal', 'manzana', 'frambuesa', 'coco', 'tropical', 'baya', 'frutos', 'jugoso', 'frutos rojos', 'frutas tropicales'],
+                amaderado: ['madera', 'cedro', 'sándalo', 'vetiver', 'oud', 'roble', 'amaderado', 'leñoso', 'higo'],
+                oriental: ['oriental', 'ámbar', 'especias', 'azafrán', 'resinas', 'incienso', 'exótico', 'coñac', 'canela'],
+                cremoso: ['cremoso', 'suave', 'aterciopelado', 'lácteo', 'sedoso', 'envolvente'],
+                especiado: ['especias', 'pimienta', 'cardamomo', 'canela', 'jengibre', 'especiado'],
+                almizcle: ['almizcle', 'musk', 'almizcle blanco', 'sensual', 'piel']
+            };
+            
+            // Detectar ocasiones
+            const occasionMap = {
+                trabajo: ['trabajo', 'oficina', 'profesional', 'reunión', 'formal', 'ejecutivo', 'laboral'],
+                noche: ['noche', 'nocturno', 'evening', 'cena', 'tardío', 'after'],
+                cita: ['cita', 'romántico', 'amor', 'pareja', 'seducir', 'conquista', 'íntimo'],
+                fiesta: ['fiesta', 'celebración', 'party', 'evento', 'social', 'discoteca', 'bar'],
+                deporte: ['deporte', 'gym', 'ejercicio', 'correr', 'entrenar', 'fitness', 'activo'],
+                casual: ['diario', 'casual', 'día a día', 'normal', 'relajado', 'informal'],
+                elegante: ['elegante', 'sofisticado', 'gala', 'ceremonia', 'boda', 'importante']
+            };
+            
+            // Detectar momento del día
+            const timeMap = {
+                mañana: ['mañana', 'morning', 'desayuno', 'temprano', 'amanecer'],
+                día: ['día', 'mediodía', 'afternoon', 'diurno', 'solar'],
+                tarde: ['tarde', 'evening', 'atardecer', 'vespertino'],
+                noche: ['noche', 'night', 'nocturno', 'cena', 'madrugada']
+            };
+            
+            // Detectar estado de ánimo
+            const moodMap = {
+                energético: ['energético', 'activo', 'vibrante', 'dinámico', 'motivado'],
+                relajado: ['relajado', 'tranquilo', 'zen', 'calma', 'paz', 'sereno'],
+                sensual: ['sensual', 'seductor', 'sexy', 'provocativo', 'atractivo'],
+                confiado: ['confiado', 'seguro', 'poderoso', 'fuerte', 'dominante'],
+                alegre: ['alegre', 'feliz', 'contento', 'optimista', 'jovial']
+            };
+            
+            // Detectar intensidad
+            const intensityMap = {
+                sutil: ['sutil', 'ligero', 'suave', 'delicado', 'discreto'],
+                moderado: ['moderado', 'medio', 'equilibrado', 'normal'],
+                intenso: ['intenso', 'fuerte', 'potente', 'profundo', 'duradero', 'proyección']
+            };
+            
+            // Detectar temporada
+            const seasonMap = {
+                verano: ['verano', 'calor', 'playa', 'vacaciones', 'sol'],
+                invierno: ['invierno', 'frío', 'navidad', 'acogedor', 'cálido'],
+                primavera: ['primavera', 'flores', 'renovación', 'fresco'],
+                otoño: ['otoño', 'hojas', 'melancólico', 'nostálgico']
+            };
+            
+            // Procesar todas las categorías
+            const allMaps = {
+                fragrance: fragranceMap,
+                occasion: occasionMap,
+                time: timeMap,
+                mood: moodMap,
+                intensity: intensityMap,
+                season: seasonMap
+            };
+            
+            Object.keys(allMaps).forEach(category => {
+                Object.keys(allMaps[category]).forEach(key => {
+                    allMaps[category][key].forEach(word => {
+                        if (lowerMessage.includes(word)) {
+                            analysis[category].push(key);
+                        }
+                    });
+                });
+            });
+            
+            // Eliminar duplicados
+            Object.keys(analysis).forEach(key => {
+                analysis[key] = [...new Set(analysis[key])];
+            });
+            
+            return analysis;
+        }
+        
+        function getGenderFromSKU(sku) {
+            if (sku.startsWith('M-')) return 'mujer';
+            if (sku.startsWith('H-')) return 'hombre';
+            if (sku.startsWith('U-')) return 'unisex';
+            return 'unisex'; // fallback
+        }
+        
+        function calculatePerfumeScore(perfume, analysis) {
+            let score = 0;
+            const perfumeText = `${perfume.name} ${perfume.inspiration} ${perfume.notes} ${perfume.description}`.toLowerCase();
+            
+            // Detectar género real del perfume por SKU
+            const realGender = getGenderFromSKU(perfume.sku);
+            
+            // Puntuación por género (alta prioridad)
+            analysis.gender.forEach(gender => {
+                if (realGender === gender) score += 5;
+                if (realGender === 'unisex' && gender !== 'unisex') score += 3;
+                if (perfume.gender === gender) score += 2; // backup por si acaso
+            });
+            
+            // Puntuación por características de fragancia
+            analysis.fragrance.forEach(frag => {
+                if (perfume.keywords && perfume.keywords.includes(frag)) score += 4;
+                if (perfumeText.includes(frag)) score += 2;
+            });
+            
+            // Puntuación EXTRA por notas específicas en el campo 'notes'
+            const notesText = perfume.notes.toLowerCase();
+            analysis.fragrance.forEach(frag => {
+                // Buscar notas específicas
+                if (frag === 'frutal' && (notesText.includes('manzana') || notesText.includes('frambuesa') || notesText.includes('coco') || notesText.includes('frutas'))) score += 3;
+                if (frag === 'floral' && (notesText.includes('rosa') || notesText.includes('jazmín') || notesText.includes('lirio') || notesText.includes('flor'))) score += 3;
+                if (frag === 'amaderado' && (notesText.includes('cedro') || notesText.includes('sándalo') || notesText.includes('oud') || notesText.includes('vetiver') || notesText.includes('higo'))) score += 3;
+                if (frag === 'gourmand' && (notesText.includes('vainilla') || notesText.includes('caramelo') || notesText.includes('chocolate') || notesText.includes('tonka') || notesText.includes('azúcar'))) score += 3;
+                if (frag === 'fresco' && (notesText.includes('bergamota') || notesText.includes('limón') || notesText.includes('cítricos') || notesText.includes('menta'))) score += 3;
+                if (frag === 'oriental' && (notesText.includes('ámbar') || notesText.includes('azafrán') || notesText.includes('especias') || notesText.includes('coñac'))) score += 3;
+            });
+            
+            // Puntuación por ocasión
+            analysis.occasion.forEach(occasion => {
+                if (occasion === 'trabajo' && (perfumeText.includes('elegante') || perfumeText.includes('profesional') || perfumeText.includes('sutil'))) score += 3;
+                if (occasion === 'noche' && (perfumeText.includes('intenso') || perfumeText.includes('sensual') || perfumeText.includes('profundo'))) score += 3;
+                if (occasion === 'cita' && (perfumeText.includes('seductor') || perfumeText.includes('romántico') || perfumeText.includes('sensual'))) score += 3;
+                if (occasion === 'fiesta' && (perfumeText.includes('intenso') || perfumeText.includes('llamativo') || perfumeText.includes('vibrante'))) score += 3;
+                if (occasion === 'deporte' && (perfumeText.includes('fresco') || perfumeText.includes('energético') || perfumeText.includes('limpio'))) score += 3;
+                if (occasion === 'casual' && (perfumeText.includes('suave') || perfumeText.includes('ligero') || perfumeText.includes('día'))) score += 3;
+                if (occasion === 'elegante' && (perfumeText.includes('elegante') || perfumeText.includes('sofisticado') || perfumeText.includes('lujoso'))) score += 3;
+            });
+            
+            // Puntuación por momento del día
+            analysis.time.forEach(time => {
+                if (time === 'mañana' && (perfumeText.includes('fresco') || perfumeText.includes('energético') || perfumeText.includes('día'))) score += 2;
+                if (time === 'día' && (perfumeText.includes('día') || perfumeText.includes('solar') || perfumeText.includes('ligero'))) score += 2;
+                if (time === 'noche' && (perfumeText.includes('intenso') || perfumeText.includes('profundo') || perfumeText.includes('sensual'))) score += 2;
+            });
+            
+            // Puntuación por estado de ánimo
+            analysis.mood.forEach(mood => {
+                if (mood === 'energético' && (perfumeText.includes('energético') || perfumeText.includes('vibrante') || perfumeText.includes('fresco'))) score += 2;
+                if (mood === 'relajado' && (perfumeText.includes('suave') || perfumeText.includes('tranquilo') || perfumeText.includes('zen'))) score += 2;
+                if (mood === 'sensual' && (perfumeText.includes('sensual') || perfumeText.includes('seductor') || perfumeText.includes('íntimo'))) score += 2;
+                if (mood === 'confiado' && (perfumeText.includes('fuerte') || perfumeText.includes('poderoso') || perfumeText.includes('intenso'))) score += 2;
+            });
+            
+            // Puntuación por intensidad
+            analysis.intensity.forEach(intensity => {
+                if (intensity === 'sutil' && (perfumeText.includes('suave') || perfumeText.includes('delicado') || perfumeText.includes('ligero'))) score += 2;
+                if (intensity === 'intenso' && (perfumeText.includes('intenso') || perfumeText.includes('fuerte') || perfumeText.includes('potente'))) score += 2;
+            });
+            
+            return score;
+        }
+        
+        function recommendPerfume(userMessage) {
+            const analysis = analyzeUserInput(userMessage);
+            let bestMatch = null;
+            let maxScore = 0;
+            
+            perfumes.forEach(perfume => {
+                const score = calculatePerfumeScore(perfume, analysis);
+                
+                if (score > maxScore) {
+                    maxScore = score;
+                    bestMatch = perfume;
+                }
+            });
+            
+            // Si no hay coincidencia clara, buscar por keywords básicas
+            if (maxScore === 0) {
+                const allKeywords = [...analysis.gender, ...analysis.fragrance, ...analysis.occasion];
+                perfumes.forEach(perfume => {
+                    let score = 0;
+                    allKeywords.forEach(keyword => {
+                        if (perfume.keywords && perfume.keywords.includes(keyword)) score += 1;
+                        if (perfume.gender === keyword) score += 2;
+                    });
+                    if (score > maxScore) {
+                        maxScore = score;
+                        bestMatch = perfume;
+                    }
+                });
+            }
+            
+            return bestMatch || perfumes[Math.floor(Math.random() * perfumes.length)];
+        }
+        
+        function updatePerfumeDisplay(perfume) {
+            const realGender = getGenderFromSKU(perfume.sku);
+            const genderEmoji = realGender === 'mujer' ? '👩' : realGender === 'hombre' ? '👨' : '⚡';
+            
+            document.querySelector('.perfume-image').textContent = perfume.emoji || '🌟';
+            document.querySelector('.perfume-name').textContent = perfume.name;
+            document.querySelector('.perfume-info').textContent = `${perfume.sku} | ${genderEmoji} ${realGender}`;
+            document.querySelector('.perfume-inspiration').textContent = `Inspirado en: ${perfume.inspiration}`;
+            document.querySelector('.perfume-notes').textContent = `Notas: ${perfume.notes}`;
+            document.querySelector('.perfume-description').textContent = perfume.description;
+            
+            // Actualizar tags
+            const tagsContainer = document.querySelector('.perfume-tags');
+            tagsContainer.innerHTML = '';
+            if (perfume.keywords) {
+                perfume.keywords.slice(0, 4).forEach(keyword => {
+                    const tag = document.createElement('span');
+                    tag.className = 'tag';
+                    tag.textContent = keyword;
+                    tagsContainer.appendChild(tag);
+                });
+            }
+        }
+        
+        function generateContextualResponse(perfume, analysis) {
+            let response = `Te recomiendo ${perfume.name} (${perfume.sku}). ${perfume.description}`;
+            
+            // Añadir contexto según la ocasión
+            if (analysis.occasion.includes('trabajo')) {
+                response += " Es perfecto para el ambiente profesional, elegante pero no abrumador.";
+            } else if (analysis.occasion.includes('noche') || analysis.occasion.includes('cita')) {
+                response += " Ideal para ocasiones nocturnas, tiene la intensidad perfecta para destacar.";
+            } else if (analysis.occasion.includes('fiesta')) {
+                response += " Perfecto para fiestas, te hará memorable sin ser excesivo.";
+            } else if (analysis.occasion.includes('deporte')) {
+                response += " Excelente para actividades deportivas, fresco y energizante.";
+            } else if (analysis.occasion.includes('casual')) {
+                response += " Ideal para el día a día, cómodo y versátil.";
+            }
+            
+            // Añadir información sobre la inspiración
+            if (perfume.inspiration) {
+                response += ` Está inspirado en ${perfume.inspiration}.`;
+            }
+            
+            return response;
+        }
+        
+        function processUserMessage() {
+            const message = userInput.value.trim();
+            if (message === '') return;
+            
+            addMessage(message, true);
+            userInput.value = '';
+            
+            setTimeout(() => {
+                const analysis = analyzeUserInput(message);
+                const recommendedPerfume = recommendPerfume(message);
+                const response = generateContextualResponse(recommendedPerfume, analysis);
+                
+                addMessage(response, false);
+                updatePerfumeDisplay(recommendedPerfume);
+                
+                setTimeout(() => {
+                    const followUp = generateFollowUpQuestion(analysis);
+                    addMessage(followUp, false);
+                }, 1500);
+            }, 1000);
+        }
+        
+        function generateFollowUpQuestion(analysis) {
+            if (analysis.occasion.length > 0) {
+                return "¿Esta ocasión es frecuente para ti o buscas algo más versátil?";
+            }
+            if (analysis.intensity.length > 0) {
+                return "¿Prefieres que la fragancia sea más duradera o más sutil?";
+            }
+            if (analysis.time.length > 0) {
+                return "¿Necesitas algo para otros momentos del día también?";
+            }
+            return "¿Te gustaría explorar fragancias similares o algo completamente diferente?";
+        }
+        
+        // Event listeners
+        sendBtn.addEventListener('click', processUserMessage);
+        userInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                processUserMessage();
+            }
+        });
+        
+        window.sendSuggestion = function(suggestion) {
+            if (suggestion === 'Ayuda') {
+                addMessage('Ayuda', true);
+                setTimeout(() => {
+                    addMessage("🔍 **GUÍA COMPLETA DE BÚSQUEDA**", false);
+                    showSearchGuide();
+                }, 500);
+                return;
+            }
+            userInput.value = suggestion;
+            processUserMessage();
+        };
+        
+        function showSearchGuide() {
+            const guides = [
+                "🎯 **POR GÉNERO**: 'mujer', 'hombre', 'unisex'",
+                "🌿 **POR NOTAS**: 'vainilla', 'oud', 'rosa', 'manzana', 'cedro', 'bergamota', 'ámbar', 'jazmín'",
+                "🌈 **POR TIPO**: 'fresco', 'floral', 'gourmand', 'frutal', 'amaderado', 'oriental', 'cremoso'",
+                "💼 **POR OCASIÓN**: 'trabajo', 'cita', 'fiesta', 'deporte', 'casual', 'elegante', 'noche'",
+                "⏰ **POR MOMENTO**: 'mañana', 'día', 'tarde', 'noche'",
+                "😊 **POR ESTADO**: 'energético', 'relajado', 'sensual', 'confiado', 'alegre'",
+                "💪 **POR INTENSIDAD**: 'sutil', 'moderado', 'intenso', 'duradero'"
+            ];
+            
+            guides.forEach((guide, index) => {
+                setTimeout(() => {
+                    addMessage(guide, false);
+                }, 500 * (index + 1));
+            });
+            
+            setTimeout(() => {
+                addMessage("💡 **EJEMPLOS**: 'Perfume gourmand para mujer', 'Algo fresco con bergamota para deporte', 'Fragancia intensa con oud para la noche'", false);
+            }, 500 * (guides.length + 1));
+        }
+        
+        // Mensaje de bienvenida
+        setTimeout(() => {
+            const totalPerfumes = perfumes.length;
+            const mujeres = perfumes.filter(p => getGenderFromSKU(p.sku) === 'mujer').length;
+            const hombres = perfumes.filter(p => getGenderFromSKU(p.sku) === 'hombre').length;
+            const unisex = perfumes.filter(p => getGenderFromSKU(p.sku) === 'unisex').length;
+            
+            addMessage(`¡Hola! Soy tu experto en fragancias con ${totalPerfumes} perfumes exclusivos (${mujeres} para mujer, ${hombres} para hombre, ${unisex} unisex).`, false);
+            
+            setTimeout(() => {
+                addMessage("🔍 **¿CÓMO BUSCAR?** Puedes combinar cualquiera de estos criterios:", false);
+                showSearchGuide();
+            }, 1000);
+        }, 1000);
+    </script>
+</body>
+</html>
