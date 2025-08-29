@@ -3572,15 +3572,24 @@
             recognition.onstart = function() {
                 isListening = true;
                 document.getElementById('mic-btn').classList.add('active');
+                console.log('Micrófono activado');
             };
             
             recognition.onresult = function(event) {
                 const transcript = event.results[0][0].transcript;
+                console.log('Texto reconocido:', transcript);
                 userInput.value = transcript;
-                processUserMessage();
+                // No procesar automáticamente, dejar que el usuario revise
             };
             
             recognition.onend = function() {
+                isListening = false;
+                document.getElementById('mic-btn').classList.remove('active');
+                console.log('Micrófono desactivado');
+            };
+            
+            recognition.onerror = function(event) {
+                console.error('Error de reconocimiento:', event.error);
                 isListening = false;
                 document.getElementById('mic-btn').classList.remove('active');
             };
@@ -3590,9 +3599,22 @@
         function speakText(text) {
             if (speakEnabled && synthesis) {
                 synthesis.cancel();
-                const utterance = new SpeechSynthesisUtterance(text.replace(/\*\*/g, ''));
+                // Limpiar texto de markdown y emojis
+                const cleanText = text.replace(/\*\*/g, '').replace(/[🌸🍰🌊🌳💃🍭🌟⚡👩👨💼🎯🌿🌈⏰😊💪💡🔍✨]/g, '');
+                const utterance = new SpeechSynthesisUtterance(cleanText);
                 utterance.lang = 'es-ES';
-                utterance.rate = 0.9;
+                utterance.rate = 0.8;
+                utterance.pitch = 1;
+                utterance.volume = 1;
+                
+                utterance.onstart = function() {
+                    console.log('Iniciando síntesis de voz');
+                };
+                
+                utterance.onerror = function(event) {
+                    console.error('Error en síntesis de voz:', event.error);
+                };
+                
                 synthesis.speak(utterance);
             }
         }
@@ -3611,8 +3633,14 @@
                 if (isListening) {
                     recognition.stop();
                 } else {
-                    recognition.start();
+                    try {
+                        recognition.start();
+                    } catch (error) {
+                        console.error('Error al iniciar reconocimiento:', error);
+                    }
                 }
+            } else {
+                alert('Reconocimiento de voz no disponible en este navegador');
             }
         });
         
@@ -3621,6 +3649,13 @@
             speakEnabled = !speakEnabled;
             this.style.background = speakEnabled ? '#d4af37' : '#2d2d2d';
             this.style.color = speakEnabled ? '#000000' : '#d4af37';
+            
+            if (speakEnabled) {
+                // Prueba de síntesis
+                speakText('Lectura de respuestas activada');
+            } else {
+                synthesis.cancel();
+            }
         });
         
         window.sendSuggestion = function(suggestion) {
