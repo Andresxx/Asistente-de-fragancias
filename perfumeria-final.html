@@ -3561,13 +3561,16 @@
         let synthesis = window.speechSynthesis;
         let isListening = false;
         let speakEnabled = false;
+        let speechQueue = [];
+        let isSpeaking = false;
         
         // Inicializar reconocimiento de voz
         if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
             recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-            recognition.continuous = false;
-            recognition.interimResults = false;
-            recognition.lang = 'es-ES';
+            recognition.continuous = true;
+            recognition.interimResults = true;
+            recognition.lang = 'es-MX';
+            recognition.maxAlternatives = 1;
             
             recognition.onstart = function() {
                 isListening = true;
@@ -3576,10 +3579,17 @@
             };
             
             recognition.onresult = function(event) {
-                const transcript = event.results[0][0].transcript;
-                console.log('Texto reconocido:', transcript);
-                userInput.value = transcript;
-                // No procesar automáticamente, dejar que el usuario revise
+                let finalTranscript = '';
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    if (event.results[i].isFinal) {
+                        finalTranscript += event.results[i][0].transcript;
+                    }
+                }
+                if (finalTranscript) {
+                    console.log('Texto reconocido:', finalTranscript);
+                    userInput.value = finalTranscript;
+                    recognition.stop();
+                }
             };
             
             recognition.onend = function() {
@@ -3590,33 +3600,73 @@
             
             recognition.onerror = function(event) {
                 console.error('Error de reconocimiento:', event.error);
+                if (event.error === 'network') {
+                    console.log('Error de red - reintentando...');
+                    setTimeout(() => {
+                        if (isListening) {
+                            try {
+                                recognition.start();
+                            } catch (e) {
+                                console.log('No se pudo reiniciar');
+                            }
+                        }
+                    }, 1000);
+                }
                 isListening = false;
                 document.getElementById('mic-btn').classList.remove('active');
             };
         }
         
-        // Función para hablar texto
+        // Función para hablar texto con cola
         function speakText(text) {
             if (speakEnabled && synthesis) {
-                synthesis.cancel();
-                // Limpiar texto de markdown y emojis
-                const cleanText = text.replace(/\*\*/g, '').replace(/[🌸🍰🌊🌳💃🍭🌟⚡👩👨💼🎯🌿🌈⏰😊💪💡🔍✨]/g, '');
-                const utterance = new SpeechSynthesisUtterance(cleanText);
-                utterance.lang = 'es-ES';
-                utterance.rate = 0.8;
-                utterance.pitch = 1;
-                utterance.volume = 1;
-                
-                utterance.onstart = function() {
-                    console.log('Iniciando síntesis de voz');
-                };
-                
-                utterance.onerror = function(event) {
-                    console.error('Error en síntesis de voz:', event.error);
-                };
-                
-                synthesis.speak(utterance);
+                speechQueue.push(text);
+                if (!isSpeaking) {
+                    processNextSpeech();
+                }
             }
+        }
+        
+        function processNextSpeech() {
+            if (speechQueue.length === 0) {
+                isSpeaking = false;
+                return;
+            }
+            
+            isSpeaking = true;
+            const text = speechQueue.shift();
+            
+            // Limpiar texto de markdown y emojis
+            const cleanText = text.replace(/\*\*/g, '').replace(/[🌸🍰🌊🌳💃🍭🌟⚡👩👨💼🎯🌿🌈⏰😊💪💡🔍✨💫]/g, '');
+            
+            // Buscar voz en español
+            const voices = synthesis.getVoices();
+            const spanishVoice = voices.find(voice => 
+                voice.lang.startsWith('es') && voice.name.includes('Google')
+            ) || voices.find(voice => voice.lang.startsWith('es'));
+            
+            const utterance = new SpeechSynthesisUtterance(cleanText);
+            utterance.lang = 'es-MX';
+            utterance.rate = 0.7;
+            utterance.pitch = 1;
+            utterance.volume = 1;
+            
+            if (spanishVoice) {
+                utterance.voice = spanishVoice;
+            }
+            
+            utterance.onend = function() {
+                setTimeout(() => {
+                    processNextSpeech();
+                }, 500);
+            };
+            
+            utterance.onerror = function(event) {
+                console.error('Error en síntesis de voz:', event.error);
+                processNextSpeech();
+            };
+            
+            synthesis.speak(utterance);
         }
         
         // Event listeners
@@ -3651,10 +3701,18 @@
             this.style.color = speakEnabled ? '#000000' : '#d4af37';
             
             if (speakEnabled) {
-                // Prueba de síntesis
-                speakText('Lectura de respuestas activada');
+                // Cargar voces si no están cargadas
+                if (synthesis.getVoices().length === 0) {
+                    synthesis.addEventListener('voiceschanged', function() {
+                        speakText('Lectura de respuestas activada');
+                    });
+                } else {
+                    speakText('Lectura de respuestas activada');
+                }
             } else {
                 synthesis.cancel();
+                speechQueue = [];
+                isSpeaking = false;
             }
         });
         
