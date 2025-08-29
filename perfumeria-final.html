@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Perfumería Expert - Sistema Final</title>
+    <title>Mundo Fragancias Emanuel - Consultor Virtual</title>
+    <link rel="icon" type="image/png" href="icon.png">
+    <link rel="apple-touch-icon" href="icon.png">
     <style>
         * {
             margin: 0;
@@ -13,8 +15,8 @@
         }
         
         body {
-            background: linear-gradient(135deg, #f8f4ff 0%, #f0ebff 100%);
-            color: #333;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #f5f5f5;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -29,13 +31,17 @@
         
         header {
             text-align: center;
-            padding: 20px 0;
-            background: linear-gradient(135deg, #6b46c1 0%, #805ad5 100%);
-            color: white;
+            padding: 20px;
+            background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+            color: #d4af37;
             border-radius: 10px;
             margin-bottom: 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+            border: 1px solid #d4af37;
+            position: relative;
         }
+        
+
         
         h1 {
             font-size: 2.2rem;
@@ -54,13 +60,14 @@
         }
         
         .chat-container {
-            background: white;
+            background: #2d2d2d;
             border-radius: 10px;
             overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);
             height: 70vh;
             display: flex;
             flex-direction: column;
+            border: 1px solid #444;
         }
         
         .chat-messages {
@@ -86,9 +93,11 @@
         }
         
         .bot-message {
-            background: #edf2f7;
+            background: #1a1a1a;
             border-bottom-left-radius: 4px;
             align-self: flex-start;
+            border: 1px solid #d4af37;
+            color: #f5f5f5;
         }
         
         .bot-message:has-text(**) {
@@ -96,31 +105,34 @@
         }
         
         .user-message {
-            background: #6b46c1;
-            color: white;
+            background: #d4af37;
+            color: #000000;
             border-bottom-right-radius: 4px;
             align-self: flex-end;
+            font-weight: 500;
         }
         
         .input-area {
             display: flex;
             padding: 15px;
-            background: #f8f9fa;
-            border-top: 1px solid #e9ecef;
+            background: #1a1a1a;
+            border-top: 1px solid #d4af37;
         }
         
         #user-input {
             flex: 1;
             padding: 12px 15px;
-            border: 1px solid #d8d8d8;
+            border: 1px solid #d4af37;
             border-radius: 20px;
             outline: none;
             font-size: 1rem;
+            background: #2d2d2d;
+            color: #f5f5f5;
         }
         
         #send-btn {
-            background: #6b46c1;
-            color: white;
+            background: #d4af37;
+            color: #000000;
             border: none;
             border-radius: 50%;
             width: 45px;
@@ -130,23 +142,25 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            transition: background 0.3s;
+            transition: all 0.3s;
         }
         
         #send-btn:hover {
-            background: #5a3aa3;
+            background: #f4d03f;
+            transform: scale(1.05);
         }
         
         .perfume-display {
-            background: white;
+            background: #2d2d2d;
             border-radius: 10px;
             padding: 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);
             height: fit-content;
+            border: 1px solid #444;
         }
         
         .perfume-display h2 {
-            color: #6b46c1;
+            color: #d4af37;
             margin-bottom: 15px;
             text-align: center;
         }
@@ -156,42 +170,43 @@
             flex-direction: column;
             align-items: center;
             padding: 15px;
-            border: 1px solid #e9ecef;
+            border: 1px solid #d4af37;
             border-radius: 8px;
-            background: #fafafa;
+            background: #1a1a1a;
         }
         
         .perfume-image {
             width: 80px;
             height: 80px;
-            background: #ddd;
+            background: linear-gradient(135deg, #d4af37, #f4d03f);
             border-radius: 50%;
             margin-bottom: 15px;
             display: flex;
             justify-content: center;
             align-items: center;
             font-size: 2rem;
-            color: #6b46c1;
+            color: #000000;
+            box-shadow: 0 4px 10px rgba(212, 175, 55, 0.4);
         }
         
         .perfume-name {
             font-size: 1.2rem;
             font-weight: bold;
-            color: #2d3748;
+            color: #d4af37;
             margin-bottom: 5px;
             text-align: center;
         }
         
         .perfume-info {
             font-size: 0.9rem;
-            color: #718096;
+            color: #cccccc;
             margin-bottom: 10px;
             text-align: center;
         }
         
         .perfume-inspiration {
             font-size: 0.95rem;
-            color: #4a5568;
+            color: #f5f5f5;
             font-style: italic;
             margin-bottom: 10px;
             text-align: center;
@@ -199,14 +214,14 @@
         
         .perfume-notes {
             font-size: 0.9rem;
-            color: #4a5568;
+            color: #f5f5f5;
             margin-bottom: 10px;
             text-align: center;
         }
         
         .perfume-description {
             font-size: 0.9rem;
-            color: #718096;
+            color: #cccccc;
             text-align: center;
         }
         
@@ -219,11 +234,12 @@
         }
         
         .tag {
-            background: #6b46c1;
-            color: white;
+            background: #d4af37;
+            color: #000000;
             padding: 4px 8px;
             border-radius: 12px;
             font-size: 0.8rem;
+            font-weight: 500;
         }
         
         .chat-suggestions {
@@ -231,24 +247,26 @@
             flex-wrap: wrap;
             gap: 8px;
             padding: 10px 15px;
-            background: #f8f9fa;
-            border-top: 1px solid #e9ecef;
+            background: #1a1a1a;
+            border-top: 1px solid #d4af37;
         }
         
         .suggestion-chip {
-            background: white;
-            border: 1px solid #d8d8d8;
+            background: #2d2d2d;
+            border: 1px solid #d4af37;
             padding: 6px 12px;
             border-radius: 15px;
             font-size: 0.9rem;
             cursor: pointer;
             transition: all 0.2s;
+            color: #f5f5f5;
         }
         
         .suggestion-chip:hover {
-            background: #6b46c1;
-            color: white;
-            border-color: #6b46c1;
+            background: #d4af37;
+            color: #000000;
+            border-color: #d4af37;
+            transform: translateY(-2px);
         }
         
         @media (max-width: 768px) {
@@ -263,14 +281,16 @@
             h1 {
                 font-size: 1.8rem;
             }
+            
+
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>🌸 Perfumería Expert</h1>
-            <p class="tagline">Sistema Experto con Base de Datos Real (M-H-U)</p>
+            <h1><img src="spa.png" alt="Spa" style="width: 40px; height: 40px; vertical-align: middle; margin-right: 12px; filter: brightness(0) saturate(100%) invert(84%) sepia(29%) saturate(1458%) hue-rotate(18deg) brightness(95%) contrast(89%);"> Mundo Fragancias Emanuel</h1>
+            <p class="tagline">Consultor Virtual de Fragancias Premium </p>
         </header>
         
         <div class="main-content">
@@ -278,7 +298,7 @@
                 <div class="chat-messages" id="chat-messages"></div>
                 
                 <div class="input-area">
-                    <input type="text" id="user-input" placeholder="Describe qué fragancia buscas...">
+                    <input type="text" id="user-input" placeholder="Describe qué fragancia busfcas...">
                     <button id="send-btn">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <line x1="22" y1="2" x2="11" y2="13"></line>
@@ -293,6 +313,7 @@
                     <div class="suggestion-chip" onclick="sendSuggestion('Algo fresco con cítricos para deporte')">🍋 Fresco deporte</div>
                     <div class="suggestion-chip" onclick="sendSuggestion('Perfume floral con rosa para cita')">🌹 Rosa romántica</div>
                     <div class="suggestion-chip" onclick="sendSuggestion('Fragancia elegante para trabajo')">💼 Elegante trabajo</div>
+                    <div class="suggestion-chip" onclick="sendSuggestion('Catálogo Emanuel')">✨ Catálogo Emanuel</div>
                     <div class="suggestion-chip" onclick="sendSuggestion('Ayuda')">❓ Guía completa</div>
                 </div>
             </div>
@@ -3493,6 +3514,28 @@
                 }, 500);
                 return;
             }
+            if (suggestion === 'Catálogo Emanuel') {
+                addMessage('Catálogo Emanuel', true);
+                setTimeout(() => {
+                    addMessage("✨ **MUNDO FRAGANCIAS EMANUEL** - Catálogo Premium", false);
+                    setTimeout(() => {
+                        addMessage("🌸 **77 fragancias exclusivas** inspiradas en las mejores casas de perfumería mundial", false);
+                    }, 500);
+                    setTimeout(() => {
+                        addMessage("👩 **Femeninas**: Desde gourmands dulces hasta florales elegantes", false);
+                    }, 1000);
+                    setTimeout(() => {
+                        addMessage("👨 **Masculinas**: Frescos deportivos hasta orientales intensos", false);
+                    }, 1500);
+                    setTimeout(() => {
+                        addMessage("⚡ **Unisex**: Versatilidad y sofisticación para todos", false);
+                    }, 2000);
+                    setTimeout(() => {
+                        addMessage("💫 **¿Qué fragancia buscas hoy?** Descíbeme tu estilo y te ayudo a encontrar tu aroma perfecto.", false);
+                    }, 2500);
+                }, 500);
+                return;
+            }
             userInput.value = suggestion;
             processUserMessage();
         };
@@ -3526,10 +3569,10 @@
             const hombres = perfumes.filter(p => getGenderFromSKU(p.sku) === 'hombre').length;
             const unisex = perfumes.filter(p => getGenderFromSKU(p.sku) === 'unisex').length;
             
-            addMessage(`¡Hola! Soy tu experto en fragancias con ${totalPerfumes} perfumes exclusivos (${mujeres} para mujer, ${hombres} para hombre, ${unisex} unisex).`, false);
+            addMessage(`¡Bienvenido a Mundo Fragancias Emanuel! 🌸 Soy tu consultor virtual con ${totalPerfumes} fragancias premium (${mujeres} femeninas, ${hombres} masculinas, ${unisex} unisex).`, false);
             
             setTimeout(() => {
-                addMessage("🔍 **¿CÓMO BUSCAR?** Puedes combinar cualquiera de estos criterios:", false);
+                addMessage("🔍 **¿CÓMO BUSCAR EN NUESTRO CATÁLOGO?** Combina estos criterios:", false);
                 showSearchGuide();
             }, 1000);
         }, 1000);
