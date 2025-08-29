@@ -269,6 +269,49 @@
             transform: translateY(-2px);
         }
         
+        .voice-controls {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 1000;
+        }
+        
+        .voice-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 2px solid #d4af37;
+            background: #2d2d2d;
+            color: #d4af37;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            box-shadow: 0 4px 10px rgba(212, 175, 55, 0.3);
+        }
+        
+        .voice-btn:hover {
+            background: #d4af37;
+            color: #000000;
+            transform: scale(1.1);
+        }
+        
+        .voice-btn.active {
+            background: #d4af37;
+            color: #000000;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(212, 175, 55, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
+        }
+        
         @media (max-width: 768px) {
             .main-content {
                 grid-template-columns: 1fr;
@@ -298,7 +341,7 @@
                 <div class="chat-messages" id="chat-messages"></div>
                 
                 <div class="input-area">
-                    <input type="text" id="user-input" placeholder="Describe qué fragancia busfcas...">
+                    <input type="text" id="user-input" placeholder="Describe qué fragancia buscas...">
                     <button id="send-btn">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <line x1="22" y1="2" x2="11" y2="13"></line>
@@ -331,6 +374,20 @@
                 </div>
             </div>
         </div>
+    </div>
+    
+    <div class="voice-controls">
+        <button id="mic-btn" class="voice-btn" title="Hablar">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/>
+                <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
+            </svg>
+        </button>
+        <button id="speaker-btn" class="voice-btn" title="Leer respuestas">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+            </svg>
+        </button>
     </div>
 
     <script>
@@ -3476,10 +3533,12 @@
                 
                 addMessage(response, false);
                 updatePerfumeDisplay(recommendedPerfume);
+                speakText(response);
                 
                 setTimeout(() => {
                     const followUp = generateFollowUpQuestion(analysis);
                     addMessage(followUp, false);
+                    speakText(followUp);
                 }, 1500);
             }, 1000);
         }
@@ -3497,12 +3556,71 @@
             return "¿Te gustaría explorar fragancias similares o algo completamente diferente?";
         }
         
+        // Variables de voz
+        let recognition = null;
+        let synthesis = window.speechSynthesis;
+        let isListening = false;
+        let speakEnabled = false;
+        
+        // Inicializar reconocimiento de voz
+        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+            recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.lang = 'es-ES';
+            
+            recognition.onstart = function() {
+                isListening = true;
+                document.getElementById('mic-btn').classList.add('active');
+            };
+            
+            recognition.onresult = function(event) {
+                const transcript = event.results[0][0].transcript;
+                userInput.value = transcript;
+                processUserMessage();
+            };
+            
+            recognition.onend = function() {
+                isListening = false;
+                document.getElementById('mic-btn').classList.remove('active');
+            };
+        }
+        
+        // Función para hablar texto
+        function speakText(text) {
+            if (speakEnabled && synthesis) {
+                synthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text.replace(/\*\*/g, ''));
+                utterance.lang = 'es-ES';
+                utterance.rate = 0.9;
+                synthesis.speak(utterance);
+            }
+        }
+        
         // Event listeners
         sendBtn.addEventListener('click', processUserMessage);
         userInput.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 processUserMessage();
             }
+        });
+        
+        // Botón micrófono
+        document.getElementById('mic-btn').addEventListener('click', function() {
+            if (recognition) {
+                if (isListening) {
+                    recognition.stop();
+                } else {
+                    recognition.start();
+                }
+            }
+        });
+        
+        // Botón altavoz
+        document.getElementById('speaker-btn').addEventListener('click', function() {
+            speakEnabled = !speakEnabled;
+            this.style.background = speakEnabled ? '#d4af37' : '#2d2d2d';
+            this.style.color = speakEnabled ? '#000000' : '#d4af37';
         });
         
         window.sendSuggestion = function(suggestion) {
